@@ -21,6 +21,16 @@
     <title> Pengguna Listrik | PISS</title>
 
 	<?php echo headScript(); ?>
+	<style>
+		#mid_chosen.chosen-container,
+		#mid_chosen.chosen-container .chosen-drop {
+			width: 100% !important;
+			box-sizing: border-box;
+		}
+		#mid_chosen.chosen-container {
+			display: block !important;
+		}
+	</style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

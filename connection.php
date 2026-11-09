@@ -6,6 +6,7 @@ $database 	= getenv('DB_DATABASE') ?: (getenv('DB_NAME') ?: "db_piss");
 
 $conn = mysql_connect($server,$username,$password) or die("Koneksi gagal");
 mysql_select_db($database) or die("Database tidak bisa dibuka");
+mysql_query("SET SESSION sql_mode=''");
 
 function format_rupiah($angka){
 	$rupiah = 'Rp '.number_format($angka,0,',',',');
