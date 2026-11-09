@@ -839,8 +839,7 @@
 		<li class="dropdown">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#" 
 			style="color: #ffffff !important; background-color: transparent !important;"
-			onmouseover="this.style.backgroundColor='rgb(103, 165, 218)'" 
-			onmouseout="this.style.backgroundColor='transparent'">
+			>
 
 				<i class="fa fa-cog" style="color: #ffffff;"></i>&nbsp;
 				<b style="text-transform: capitalize; color: #ffffff;">Pengaturan</b>&nbsp;
