@@ -4,7 +4,7 @@ $username 	= getenv('DB_USERNAME') ?: (getenv('DB_USER') ?: "root");
 $password 	= getenv('DB_PASSWORD') ?: (getenv('DB_PASS') ?: "");
 $database 	= getenv('DB_DATABASE') ?: (getenv('DB_NAME') ?: "db_piss");
 
-mysql_connect($server,$username,$password) or die("Koneksi gagal");
+$conn = mysql_connect($server,$username,$password) or die("Koneksi gagal");
 mysql_select_db($database) or die("Database tidak bisa dibuka");
 
 function format_rupiah($angka){

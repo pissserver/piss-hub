@@ -1,5 +1,7 @@
 FROM php:5.6-apache
 
+RUN docker-php-ext-install mysql mysqli
+
 RUN a2enmod rewrite
 
 RUN echo "date.timezone = Asia/Jakarta" > /usr/local/etc/php/conf.d/ini.ini || true
