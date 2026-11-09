@@ -43,12 +43,16 @@ $hubApps = [
 ];
 $hubApp = isset($hubApps[$hubCurrent]) ? $hubApps[$hubCurrent] : ['label' => 'PISS Hub', 'icon' => 'fa-th-large'];
 $hubAppPath = $hubBase.'/'.$hubCurrent.'/dashboard.php';
-foreach ($hubTabs as $tab) {
+$hubActiveTabIndex = 0;
+foreach ($hubTabs as $index => $tab) {
 	if ($hubCurrent === $tab['dir']) {
 		$hubAppPath = $hubBase.'/'.$tab['path'];
+		$hubActiveTabIndex = $index;
 		break;
 	}
 }
+$hubTabCount = max(count($hubTabs), 1);
+$hubTabWidth = 100 / $hubTabCount;
 ?>
 <a class="hub-brand" href="<?= htmlspecialchars($hubAppPath, ENT_QUOTES, 'UTF-8') ?>" aria-label="<?= htmlspecialchars($hubApp['label'], ENT_QUOTES, 'UTF-8') ?> PISS">
 	<span class="hub-brand-mark"><i class="fa <?= $hubApp['icon'] ?>" aria-hidden="true"></i></span>
@@ -58,13 +62,22 @@ foreach ($hubTabs as $tab) {
 	</span>
 </a>
 <div id="hub-tabs">
-	<?php foreach ($hubTabs as $tab) : ?>
+	<div class="hub-tabs-track">
+		<span class="hub-tabs-indicator" aria-hidden="true" style="left: <?= $hubActiveTabIndex * $hubTabWidth ?>%; width: <?= $hubTabWidth ?>%;"></span>
+		<?php foreach ($hubTabs as $tab) : ?>
 		<?php if ($hubCurrent === $tab['dir']) : ?>
-			<span class="hub-tab hub-tab-active"><i class="fa fa-fw <?= $tab['icon'] ?>"></i> <?= $tab['label'] ?></span>
+			<span class="hub-tab hub-tab-active" aria-current="page" title="<?= $tab['label'] ?>">
+				<i class="fa fa-fw <?= $tab['icon'] ?>" aria-hidden="true"></i>
+				<span class="hub-tab-label"><?= $tab['label'] ?></span>
+			</span>
 		<?php else : ?>
-			<a href="<?= $hubBase.'/'.$tab['path'] ?>" class="hub-tab"><i class="fa fa-fw <?= $tab['icon'] ?>"></i> <?= $tab['label'] ?></a>
+			<a href="<?= $hubBase.'/'.$tab['path'] ?>" class="hub-tab" title="<?= $tab['label'] ?>">
+				<i class="fa fa-fw <?= $tab['icon'] ?>" aria-hidden="true"></i>
+				<span class="hub-tab-label"><?= $tab['label'] ?></span>
+			</a>
 		<?php endif; ?>
-	<?php endforeach; ?>
+		<?php endforeach; ?>
+	</div>
 </div>
 <style>
 	.hub-brand{display:flex;align-items:center;gap:12px;margin:14px 12px 10px;padding:11px 12px;min-height:64px;border:1px solid rgba(148,163,184,.16);border-radius:14px;background:linear-gradient(145deg,#243449,#182235 72%);color:#f8fafc;text-decoration:none;transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease;}
@@ -74,16 +87,23 @@ foreach ($hubTabs as $tab) {
 	.hub-brand-copy{display:flex;min-width:0;flex-direction:column;gap:3px;}
 	.hub-brand-name{overflow:hidden;color:#f8fafc;font-size:14px;font-weight:700;letter-spacing:.045em;text-overflow:ellipsis;white-space:nowrap;}
 	.hub-brand-caption{color:#94a3b8;font-size:9px;font-weight:700;letter-spacing:.16em;white-space:nowrap;}
-	#hub-tabs{display:flex;gap:5px;margin:0 12px;padding:7px 0 12px;border-bottom:1px solid rgba(148,163,184,.14);}
-	.hub-tab{flex:1;display:inline-block;text-align:center;padding:8px 4px;border:1px solid transparent;border-radius:9px;font-size:12px;font-weight:600;text-decoration:none;background:rgba(255,255,255,0.045);color:#cbd5e1;transition:background .2s ease,border-color .2s ease,color .2s ease;white-space:nowrap;}
-	.hub-tab:hover,.hub-tab:focus{background:rgba(255,255,255,.09);border-color:rgba(148,163,184,.18);color:#fff;text-decoration:none;}
-	.hub-tab:focus{outline:2px solid #93c5fd;outline-offset:2px;}
-	.hub-tab-active,.hub-tab-active:hover{background:linear-gradient(135deg,#facc15,#f59e0b);color:#1f2937;border-color:rgba(255,255,255,.12);box-shadow:0 4px 12px rgba(245,158,11,.2);text-decoration:none;}
+	#hub-tabs{margin:0 12px;padding:0 0 12px;border-bottom:1px solid rgba(148,163,184,.14);}
+	.hub-tabs-track{position:relative;display:flex;min-width:0;padding:0;border:1px solid rgba(148,163,184,.12);border-radius:12px;background:rgba(4,12,24,.3);}
+	.hub-tabs-indicator{position:absolute;top:3px;bottom:3px;border-radius:9px;background:linear-gradient(135deg,#facc15,#f59e0b);box-shadow:0 3px 9px rgba(245,158,11,.2);transition:left .25s ease,width .25s ease;}
+	.hub-tab{position:relative;z-index:1;display:flex;flex:1;min-width:0;min-height:48px;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:5px 2px;border:0;border-radius:9px;background:transparent;color:#cbd5e1;text-align:center;text-decoration:none;transition:color .2s ease;}
+	.hub-tab i{font-size:11px;line-height:1;}
+	.hub-tab-label{display:block;max-width:100%;overflow:hidden;font-size:10px;font-weight:600;line-height:1.1;text-overflow:ellipsis;white-space:nowrap;}
+	.hub-tab:hover,.hub-tab:focus{background:rgba(255,255,255,.07);color:#fff;text-decoration:none;}
+	.hub-tab:focus{outline:2px solid #93c5fd;outline-offset:-2px;}
+	.hub-tab-active,.hub-tab-active:hover{background:transparent;color:#1f2937;text-decoration:none;}
+	.hub-tab-active i,.hub-tab-active .hub-tab-label{color:#1f2937;}
 	body.sidebar-collapse #hub-tabs{display:none;}
 	body.sidebar-collapse .hub-brand{justify-content:center;margin:14px 8px 10px;padding:10px 0;}
 	body.sidebar-collapse .hub-brand-copy{display:none;}
 	body.sidebar-collapse .hub-brand-mark{flex-basis:40px;}
 	@media (min-width:1025px){
+		body,#page-wrapper{background-color:#f1f3f5!important;}
+		#wrapper{background-color:#f1f3f5;}
 		.navbar.navbar-fixed-top{top:14px;left:268px;right:14px;height:56px;display:flex;align-items:center;justify-content:space-between;border:0;border-radius:16px;background:#428bca!important;box-shadow:0 10px 28px rgba(15,23,42,.18);transition:left .25s ease;}
 		.navbar-header.bg-primary{position:absolute;top:0;left:12px;width:42px;height:56px;min-height:56px;background:transparent!important;}
 		.navbar-header{display:flex;align-items:center;min-height:56px;}
