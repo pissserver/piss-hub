@@ -1,0 +1,14 @@
+<?php
+	session_start();
+	session_destroy();
+	unset ($_SESSION['checker']);
+	unset ($_SESSION['username']);
+	unset ($_SESSION['role']);
+	session_regenerate_id();
+	
+	echo '<script>
+	localStorage.removeItem("notificationHidden");
+	window.location.href = "../index.php";
+	</script>';
+	exit();
+?>
