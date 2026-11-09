@@ -594,7 +594,6 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="dashboard.php" style="color: #ffffff; background-color: #111827; width: 240px;"><i class="fa fa-balance-scale fa-fw silhouette"></i> <b class="silhouette">LAPAK PISS</b></a>
 		<button type="button" class="sidebar-toggle-btn"
 			onclick="toggleSidebar()">
 			<i class="fa fa-bars"></i>
@@ -890,4 +889,3 @@
 
 	});
 </script>
-
