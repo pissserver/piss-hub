@@ -8,7 +8,7 @@
     $v_listrik = mysql_fetch_array($version_listrik);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
     <head>
         <title>Login | PISS Hub</title>
         <meta charset="UTF-8" />
@@ -24,8 +24,9 @@
         <link rel="stylesheet" type="text/css" href="timbangan/vendor/daterangepicker/daterangepicker.css" />
         <link rel="stylesheet" type="text/css" href="timbangan/css/util.css" />
         <link rel="stylesheet" type="text/css" href="timbangan/css/login.css" />
+        <link rel="stylesheet" type="text/css" href="timbangan/css/hub-login.css" />
     </head>
-    <body style="background-color: #666666">
+    <body class="hub-login-page">
         <div class="limiter">
             <div class="container-login100">
                 <div class="wrap-login100">
@@ -34,34 +35,43 @@
                     <div class="bubble"></div>
                     <div class="bubble"></div>
                     <div class="bubble"></div>
-                    <form method="post" action="hub_checklogin.php" class="login100-form validate-form">
-                        <span class="login100-form-title pb-3">
-                            Login PISS
-                            <span style="color: #428bca; font-weight: 700">Hub👋</span>
+                    <form method="post" action="hub_checklogin.php" class="login100-form hub-login-form validate-form">
+                        <div class="hub-login-brand">
+                            <img src="timbangan/img/logo.png" alt="" />
+                            <span class="hub-login-brand-copy">
+                                <span class="hub-login-brand-name">PISS HUB</span>
+                                <span class="hub-login-brand-caption">OPERATIONAL WORKSPACE</span>
+                            </span>
+                        </div>
+
+                        <span class="login100-form-title">
+                            Selamat datang kembali
                         </span>
-                        <p class="text-center" style="margin-top: -10px; font-size: 11px;">
-                            Timbangan v<?php echo $v_timbangan['version']; ?> | 
-                            Lapak v<?php echo $v_lapak['version']; ?> | 
-                            Listrik v<?php echo $v_listrik['version']; ?>
+                        <p class="hub-login-intro">
+                            Masuk untuk melanjutkan ke dashboard operasional Anda.
                         </p>
 
-                        <div class="illustration text-center mb-4 mt-3">
-                            <img src="timbangan/img/login.png" alt="Illustration" width="330" />
+                        <div class="hub-version-list" aria-label="Versi aplikasi">
+                            <span class="hub-version"><i class="fa fa-balance-scale" aria-hidden="true"></i> Timbangan v<?php echo $v_timbangan['version']; ?></span>
+                            <span class="hub-version"><i class="fa fa-building" aria-hidden="true"></i> Lapak v<?php echo $v_lapak['version']; ?></span>
+                            <span class="hub-version"><i class="fa fa-bolt" aria-hidden="true"></i> Listrik v<?php echo $v_listrik['version']; ?></span>
                         </div>
 
                         <div class="wrap-input100 validate-input" data-validate="Username is required">
-                            <i class="fa fa-user" aria-hidden="true" style="position: absolute; top: 12px; left: 12px; color: #428bca;"></i>
-                            <input id="user" class="form-control input100" type="text" name="user" />
+                            <i class="fa fa-user hub-input-icon" aria-hidden="true"></i>
+                            <input id="user" class="form-control input100" type="text" name="user" autocomplete="username" aria-label="Username" required />
                             <span class="focus-input100"></span>
                             <span class="label-input100">Masukkan Username</span>
                         </div>
 
                         <div class="wrap-input100 validate-input" data-validate="Password is required">
-                            <i class="fa fa-lock" aria-hidden="true" style="position: absolute; top: 12px; left: 12px; color: #428bca;"></i>
-                            <input id="password" class="form-control input100" type="password" name="pass" />
+                            <i class="fa fa-lock hub-input-icon" aria-hidden="true"></i>
+                            <input id="password" class="form-control input100" type="password" name="pass" autocomplete="current-password" aria-label="Password" required />
                             <span class="focus-input100"></span>
                             <span class="label-input100">Masukkan Password</span>
-                            <i class="fa fa-eye-slash" aria-hidden="true" id="togglePassword" style="position: absolute; top: 12px; right: 12px; color: #428bca; cursor: pointer;"></i>
+                            <button type="button" class="hub-password-toggle" id="togglePassword" aria-label="Tampilkan password" aria-pressed="false">
+                                <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                            </button>
                         </div>
 
                         <div class="flex-sb-m w-full p-t-3 p-b-32">
@@ -73,35 +83,49 @@
 
                         <div class="container-login100-form-btn">
                             <button class="login100-form-btn">
-                                Masuk
-                                <i class="fa fa-plane" aria-hidden="true" style="color: #ffffff; margin-left: 10px"></i>
+                                Masuk ke dashboard
+                                <i class="fa fa-arrow-right" aria-hidden="true" style="margin-left: 10px"></i>
                             </button>
                         </div>
+                        <p class="hub-login-note"><i class="fa fa-lock" aria-hidden="true"></i> Akses aman untuk operasional PISS</p>
                     </form>
 
                     <div class="login100-more">
-                        <div class="text-overlay">
-                            <h1>Selamat Datang,</h1>
-                            <br />
-                            <h1 id="subtitle-text"></h1>
+                        <div class="text-overlay hub-hero-copy">
+                            <span class="hub-hero-eyebrow">Satu ruang kerja. Tiga layanan.</span>
+                            <h1>Operasional bisnis dalam kendali.</h1>
+                            <div class="hub-hero-subtitle" id="subtitle-text"></div>
+                            <div class="hub-service-list" aria-label="Layanan PISS Hub">
+                                <span class="hub-service"><i class="fa fa-balance-scale" aria-hidden="true"></i> Timbangan</span>
+                                <span class="hub-service"><i class="fa fa-building" aria-hidden="true"></i> Lapak</span>
+                                <span class="hub-service"><i class="fa fa-bolt" aria-hidden="true"></i> Listrik</span>
+                            </div>
                         </div>
-                        <video autoplay loop muted playsinline class="background-video">
+                        <video loop muted playsinline preload="metadata" class="background-video" aria-hidden="true">
                             <source src="timbangan/img/login.mp4" type="video/mp4" />
                         </video>
                         <div class="overlay"></div>
-
-                        <div class="toast">
+                        <div class="toast" role="group" aria-label="Pesan motivasi">
                             <div class="toast-header">
-                                <img src="timbangan/img/logo.png" alt="Logo" />
+                                <img src="timbangan/img/logo.png" alt="" />
                                 <strong class="me-auto">Developer PISS</strong>
                                 <small>Sekarang</small>
-                                <button type="button" class="btn-close" onclick="this.parentElement.parentElement.style.display='none';" aria-label="Close">&times;</button>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    onclick="this.parentElement.parentElement.remove();"
+                                    aria-label="Tutup notifikasi"
+                                >&times;</button>
                             </div>
                             <div class="toast-body">
-                                Selamat bekerja, jangan lupa jaga kesehatan
-                                <i class="fa fa-heart"></i>
+                                <i class="fa fa-quote-left" aria-hidden="true"></i>
+                                <span id="motivationMessage">Mulai hari ini dengan semangat, selesaikan dengan bangga.</span>
                             </div>
                         </div>
+                        <button type="button" class="hub-media-toggle" id="toggleHeroVideo" aria-label="Jeda video latar" aria-pressed="false">
+                            <i class="fa fa-pause" aria-hidden="true"></i>
+                            <span>Jeda animasi</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -123,17 +147,92 @@
 
             document.getElementById("togglePassword").addEventListener("click", function () {
                 const passwordField = document.getElementById("password");
-                const icon = this;
+                const icon = this.querySelector("i");
                 if (passwordField.type === "password") {
                     passwordField.type = "text";
                     icon.classList.add("fa-eye-slash");
                     icon.classList.remove("fa-eye");
+                    this.setAttribute("aria-label", "Sembunyikan password");
+                    this.setAttribute("aria-pressed", "true");
                 } else {
                     passwordField.type = "password";
                     icon.classList.add("fa-eye");
                     icon.classList.remove("fa-eye-slash");
+                    this.setAttribute("aria-label", "Tampilkan password");
+                    this.setAttribute("aria-pressed", "false");
                 }
             });
+
+            const heroVideo = document.querySelector(".background-video");
+            const heroVideoToggle = document.getElementById("toggleHeroVideo");
+            const heroVideoToggleIcon = heroVideoToggle.querySelector("i");
+            const heroVideoToggleText = heroVideoToggle.querySelector("span");
+            const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+            const motivationMessage = document.getElementById("motivationMessage");
+            const motivationToast = motivationMessage.closest(".toast");
+            const motivationMessages = [
+                "Mulai hari ini dengan semangat, selesaikan dengan bangga.",
+                "Langkah kecil yang konsisten membawa hasil besar.",
+                "Kerja cerdas, tetap fokus, dan terus bertumbuh.",
+                "Setiap tantangan adalah kesempatan untuk jadi lebih baik.",
+                "Bersama, kita bisa mencapai lebih banyak."
+            ];
+            let motivationIndex = 0;
+
+            window.setInterval(function () {
+                if (!motivationToast.isConnected) return;
+                motivationMessage.classList.add("is-changing");
+                window.setTimeout(function () {
+                    if (!motivationToast.isConnected) return;
+                    motivationIndex = (motivationIndex + 1) % motivationMessages.length;
+                    motivationMessage.textContent = motivationMessages[motivationIndex];
+                    motivationMessage.classList.remove("is-changing");
+                }, 250);
+            }, 6000);
+
+            function updateHeroVideoToggle(isPaused) {
+                heroVideoToggle.setAttribute("aria-pressed", String(isPaused));
+                heroVideoToggle.setAttribute("aria-label", isPaused ? "Putar video latar" : "Jeda video latar");
+                heroVideoToggleIcon.classList.toggle("fa-play", isPaused);
+                heroVideoToggleIcon.classList.toggle("fa-pause", !isPaused);
+                heroVideoToggleText.textContent = isPaused ? "Putar animasi" : "Jeda animasi";
+            }
+
+            if (prefersReducedMotion.matches) {
+                heroVideo.pause();
+                updateHeroVideoToggle(true);
+            } else {
+                heroVideo.play().then(function () {
+                    updateHeroVideoToggle(false);
+                }).catch(function () {
+                    updateHeroVideoToggle(true);
+                });
+            }
+
+            heroVideoToggle.addEventListener("click", function () {
+                if (heroVideo.paused) {
+                    heroVideo.play().then(function () {
+                        updateHeroVideoToggle(false);
+                    }).catch(function () {
+                        updateHeroVideoToggle(true);
+                    });
+                } else {
+                    heroVideo.pause();
+                    updateHeroVideoToggle(true);
+                }
+            });
+
+            const handleReducedMotionChange = function (event) {
+                if (event.matches) {
+                    heroVideo.pause();
+                    updateHeroVideoToggle(true);
+                }
+            };
+            if (prefersReducedMotion.addEventListener) {
+                prefersReducedMotion.addEventListener("change", handleReducedMotionChange);
+            } else if (prefersReducedMotion.addListener) {
+                prefersReducedMotion.addListener(handleReducedMotionChange);
+            }
 
             function setCookie(name, value, days) {
                 let expires = "";
