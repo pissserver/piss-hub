@@ -29,12 +29,18 @@
     <body class="hub-login-page">
         <div class="limiter">
             <div class="container-login100">
+                <div class="hub-aurora">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="hub-grid"></div>
+                <div class="hub-particles">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="hub-cursor-glow"></div>
                 <div class="wrap-login100">
-                    <div class="bubble"></div>
-                    <div class="bubble"></div>
-                    <div class="bubble"></div>
-                    <div class="bubble"></div>
-                    <div class="bubble"></div>
                     <form method="post" action="hub_checklogin.php" class="login100-form hub-login-form validate-form">
                         <div class="hub-login-brand">
                             <img src="timbangan/img/logo.png" alt="" />
@@ -45,7 +51,7 @@
                         </div>
 
                         <span class="login100-form-title">
-                            Selamat datang kembali
+                            Selamat datang <span class="hub-grad-text">kembali</span>
                         </span>
                         <p class="hub-login-intro">
                             Masuk untuk melanjutkan ke dashboard operasional Anda.
@@ -82,7 +88,8 @@
                         </div>
 
                         <div class="container-login100-form-btn">
-                            <button class="login100-form-btn">
+                            <button class="login100-form-btn" id="submitBtn">
+                                <span class="hub-btn-shine"></span>
                                 Masuk ke dashboard
                                 <i class="fa fa-arrow-right" aria-hidden="true" style="margin-left: 10px"></i>
                             </button>
@@ -93,7 +100,7 @@
                     <div class="login100-more">
                         <div class="text-overlay hub-hero-copy">
                             <span class="hub-hero-eyebrow">Satu ruang kerja. Tiga layanan.</span>
-                            <h1>Operasional bisnis dalam kendali.</h1>
+                            <h1>Operasional bisnis dalam <span class="hub-grad-text">kendali</span>.</h1>
                             <div class="hub-hero-subtitle" id="subtitle-text"></div>
                             <div class="hub-service-list" aria-label="Layanan PISS Hub">
                                 <span class="hub-service"><i class="fa fa-balance-scale" aria-hidden="true"></i> Timbangan</span>
@@ -143,6 +150,42 @@
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("user").focus();
+
+                const cursorGlow = document.querySelector('.hub-cursor-glow');
+                if (cursorGlow && window.matchMedia('(pointer: fine)').matches) {
+                    document.addEventListener('mousemove', function(e) {
+                        cursorGlow.style.top = e.clientY + 'px';
+                        cursorGlow.style.left = e.clientX + 'px';
+                    });
+                }
+
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const ripple = document.createElement('span');
+                        ripple.className = 'hub-ripple';
+                        ripple.style.left = (e.clientX - rect.left) + 'px';
+                        ripple.style.top = (e.clientY - rect.top) + 'px';
+                        this.appendChild(ripple);
+                        setTimeout(function() {
+                            ripple.remove();
+                        }, 650);
+                    });
+                }
+
+                const tiltCard = document.querySelector('.wrap-login100');
+                if (tiltCard && window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    tiltCard.addEventListener('mousemove', function(e) {
+                        const rect = tiltCard.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) / rect.width - 0.5;
+                        const y = (e.clientY - rect.top) / rect.height - 0.5;
+                        tiltCard.style.transform = 'perspective(1400px) rotateX(' + (-y * 1.6) + 'deg) rotateY(' + (x * 1.6) + 'deg)';
+                    });
+                    tiltCard.addEventListener('mouseleave', function() {
+                        tiltCard.style.transform = 'perspective(1400px) rotateX(0deg) rotateY(0deg)';
+                    });
+                }
             });
 
             document.getElementById("togglePassword").addEventListener("click", function () {

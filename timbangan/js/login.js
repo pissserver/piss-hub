@@ -72,12 +72,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let subtitleIndex = 0;
 
     function typeSubtitleText() {
-        document.getElementById("subtitle-text").innerHTML = "";
+        document.getElementById("subtitle-text").textContent = "";
         subtitleIndex = 0;
 
         function type() {
             if (subtitleIndex < subtitleText.length) {
-                document.getElementById("subtitle-text").innerHTML += subtitleText.charAt(subtitleIndex);
+                document.getElementById("subtitle-text").textContent = subtitleText.slice(0, subtitleIndex + 1);
                 subtitleIndex++;
                 setTimeout(type, 100);
             } else {

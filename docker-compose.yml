@@ -1,42 +1,42 @@
 services:
-  web:
-    build: .
-    container_name: piss-hub-web
-    ports:
-      - "8082:80"
-    environment:
-      DB_HOST: db
-      DB_USERNAME: root
-      DB_DATABASE: db_piss
-    depends_on:
-      - db
-    restart: unless-stopped
+    web:
+        build: .
+        container_name: piss-hub-web
+        ports:
+            - "9000:80"
+        environment:
+            DB_HOST: db
+            DB_USERNAME: root
+            DB_DATABASE: db_piss
+        depends_on:
+            - db
+        restart: unless-stopped
 
-  db:
-    image: mysql:5.7
-    container_name: piss-hub-db
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: db_piss
-    volumes:
-      - db_data:/var/lib/mysql
-    restart: unless-stopped
+    db:
+        image: mysql:5.7
+        container_name: piss-hub-db
+        environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            MYSQL_DATABASE: db_piss
+        volumes:
+            - db_data:/var/lib/mysql
+        restart: unless-stopped
 
-  phpmyadmin:
-    image: phpmyadmin:5.2
-    container_name: piss-hub-pma
-    environment:
-      PMA_HOST: db
-      PMA_USER: root
-      PMA_PHP_MAX_EXECUTION_TIME: 600
-      UPLOAD_LIMIT: 512M
-    volumes:
-      - ./docker/pma/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
-    ports:
-      - "8083:80"
-    depends_on:
-      - db
-    restart: unless-stopped
+    phpmyadmin:
+        image: phpmyadmin:5.2
+        container_name: piss-hub-pma
+        environment:
+            PMA_HOST: db
+            PMA_USER: root
+            PMA_PHP_MAX_EXECUTION_TIME: 600
+            UPLOAD_LIMIT: 512M
+        volumes:
+            - ./docker/pma/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+        ports:
+            - "9001:80"
+        depends_on:
+            - db
+        restart: unless-stopped
 
 volumes:
     db_data:
