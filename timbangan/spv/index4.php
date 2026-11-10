@@ -332,7 +332,7 @@
 		align-items: center;
 		gap: 12px;
 		margin: 0 10px 18px;
-		padding: 12px 46px 12px 14px;
+		padding: 12px 14px;
 		border: 1px solid #e0e7ff;
 		border-left: 3px solid #6366f1;
 		border-radius: 12px;
@@ -384,6 +384,71 @@
 		color: #475569;
 	}
 
+	.alert-reminder-btn {
+		flex: 0 0 auto;
+		margin-left: auto;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 7px;
+		min-height: 38px;
+		padding: 0 16px;
+		border: 0;
+		border-radius: 10px;
+		background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+		color: #fff;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.2px;
+		line-height: 1;
+		white-space: nowrap;
+		text-decoration: none;
+		cursor: pointer;
+		box-shadow: 0 2px 6px rgba(79,70,229,0.30), inset 0 1px 0 rgba(255,255,255,0.18);
+		transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+	}
+
+	.alert-reminder-btn i {
+		font-size: 13px;
+		transition: transform 0.2s ease;
+	}
+
+	.alert-reminder-btn:hover,
+	.alert-reminder-btn:focus-visible {
+		color: #fff;
+		text-decoration: none;
+		transform: translateY(-1px);
+		box-shadow: 0 6px 16px rgba(79,70,229,0.38), inset 0 1px 0 rgba(255,255,255,0.18);
+		filter: saturate(1.08);
+	}
+
+	.alert-reminder-btn:hover i {
+		transform: translateY(-1px) rotate(-8deg);
+	}
+
+	.alert-reminder-btn:focus-visible {
+		outline: 3px solid rgba(99,102,241,0.35);
+		outline-offset: 2px;
+	}
+
+	.alert-reminder-btn:active {
+		transform: translateY(0);
+		box-shadow: 0 2px 6px rgba(79,70,229,0.30);
+	}
+
+	.alert-reminder-btn:disabled {
+		background: #e5e7eb;
+		color: #94a3b8;
+		box-shadow: none;
+		cursor: not-allowed;
+		transform: none;
+		filter: none;
+	}
+
+	.alert-reminder-btn:disabled i {
+		transform: none;
+	}
+
 	.alert-reminder .close {
 		position: absolute;
 		top: 50%;
@@ -425,13 +490,19 @@
 
 	@media (max-width: 480px) {
 		.alert-reminder {
+			flex-wrap: wrap;
 			align-items: flex-start;
-			padding: 12px 42px 12px 12px;
+			padding: 12px;
 		}
 		.alert-reminder-icon {
 			width: 30px;
 			height: 30px;
 			font-size: 13px;
+		}
+		.alert-reminder-btn {
+			width: 100%;
+			justify-content: center;
+			margin-left: 0;
 		}
 	}
 
@@ -1143,14 +1214,54 @@
                             <i class="fa fa-users fa-fw"></i> Data Pedagang Retail
                         </div>
 						<div class="panel-body">
+							<?php
+								/* Cek apakah data pedagang retail sudah diupdate di awal bulan ini */
+								$retailUpdateDone = false;
+								$retailUpdateDate = null;
+								$retailUpdateCol  = null;
+
+								$retailCols = @mysql_query("SHOW COLUMNS FROM merchant_retail_update");
+								if ($retailCols) {
+									$dateFallback = null;
+									while ($col = mysql_fetch_assoc($retailCols)) {
+										if (!preg_match('/date|time/i', $col['Type'])) continue;
+										if (preg_match('/period|periode|bulan|month|update|tanggal|date/i', $col['Field'])) {
+											$retailUpdateCol = $col['Field'];
+											break;
+										}
+										if ($dateFallback === null) $dateFallback = $col['Field'];
+									}
+									mysql_free_result($retailCols);
+									if ($retailUpdateCol === null) $retailUpdateCol = $dateFallback;
+								}
+
+								if ($retailUpdateCol !== null) {
+									$retailUpdateDate = executeScalar("SELECT DATE(`".$retailUpdateCol."`) FROM merchant_retail_update ORDER BY `".$retailUpdateCol."` DESC LIMIT 1");
+									$retailUpdateDone = ((string) $retailUpdateDate === date('Y-m-01'));
+								}
+							?>
 							<div class="alert-reminder" role="alert">
 								<div class="alert-reminder-icon">
 									<i class="fa fa-bullhorn"></i>
 								</div>
 								<div class="alert-reminder-body">
 									<span class="alert-reminder-title">Ingat!</span>
-									<span class="alert-reminder-text">Harap update data pedagang retail di awal bulan.</span>
+									<span class="alert-reminder-text">Harap update data pedagang retail di setiap tanggal 1 awal bulan.</span>
 								</div>
+								<?php if ($retailUpdateDone): ?>
+									<button type="button"
+										class="alert-reminder-btn"
+										disabled
+										title="Data pedagang retail sudah diperbarui bulan ini">
+										<i class="fa fa-rocket"></i> Update Pedagang
+									</button>
+								<?php else: ?>
+									<a href="weighing_action.php?task=updateMerchantRetail"
+										class="alert-reminder-btn"
+										title="Update data pedagang retail">
+										<i class="fa fa-rocket"></i> Update Pedagang
+									</a>
+								<?php endif; ?>
 							</div>
 
 							<div class="header-toolbar">
@@ -1231,7 +1342,7 @@
 										m.merchant_nick
 									FROM merchant_retail r
 									JOIN merchant m ON r.merchant_id = m.merchant_id
-									ORDER BY r.retail_id ASC
+									ORDER BY m.merchant_name ASC, m.merchant_id ASC
 								");
 
 								$alreadyAll = 0;
@@ -1305,6 +1416,7 @@
 								?>
 
 								<div class="merchant-card"
+									data-name="<?= strtolower($d['merchant_name']); ?>"
 									data-search="<?= strtolower($d['merchant_name'].' '.$d['merchant_nick'].' '.$lpk); ?>"
 									data-lapak-count="<?= (int) $counter; ?>">
 									<div class="card-box">
@@ -1795,6 +1907,10 @@
 						sorted.sort(function (a, b) {
 							var diff = parseInt(b.dataset.lapakCount, 10) - parseInt(a.dataset.lapakCount, 10);
 							return mode === 'desc' ? diff : -diff;
+						});
+					} else {
+						sorted.sort(function (a, b) {
+							return (a.dataset.name || '').localeCompare(b.dataset.name || '');
 						});
 					}
 

@@ -933,7 +933,7 @@
 		// }
 	}
 
-		// Input Pedagang Retail ============================================================================================================================
+	// Input Pedagang Retail ============================================================================================================================
 	if ($task == 'createMerchantRetail') {
 		$merchantId = $_POST['merchant'];
 		$goodsId = $_POST['goods_id'];
@@ -984,6 +984,25 @@
 			HEADER("location: index4.php");
 		} else {
 			trigger_error("Data gagal Dihapus, Silahkan dicoba lagi", E_USER_ERROR);
+			HEADER("location: index4.php");
+			exit();
+		}
+	}
+
+	// Update Pedagang Retail ============================================================================================================================
+	if ($task == 'updateMerchantRetail') {
+		$dateNowUpdate = date("Y-m-d");
+
+		$update = mysql_query("UPDATE `merchant_retail_update` SET `date` = '".$dateNowUpdate."'");
+		
+		if ($update) {
+			// Alert Information
+			$_SESSION['success'] = true;
+			$_SESSION['title'] = 'Berhasil';
+			$_SESSION['message'] = "Pedagang Retail Berhasil Diupdate";
+			HEADER("location: index4.php");
+		} else {
+			trigger_error("Data gagal Diupdate, Silahkan dicoba lagi", E_USER_ERROR);
 			HEADER("location: index4.php");
 			exit();
 		}

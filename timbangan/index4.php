@@ -961,9 +961,9 @@
         <?php include 'components/sidebar.php'; ?>
 
         <div id="page-wrapper">
-            <div class="row">
+			<br /><br><br><br>
+            <!-- <div class="row">
                 <div class="col-lg-12">
-					<br /><br><br><br>
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <i class="fa fa-plus fa-fw"></i> Tambah Pedagang Retail
@@ -1030,7 +1030,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 			
             <div class="row">
                 <div class="col-lg-12">
@@ -1117,7 +1117,7 @@
 										m.merchant_nick
 									FROM merchant_retail r
 									JOIN merchant m ON r.merchant_id = m.merchant_id
-									ORDER BY r.retail_id ASC
+									ORDER BY m.merchant_name ASC, m.merchant_id ASC
 								");
 
 								$alreadyAll = 0;
@@ -1191,6 +1191,7 @@
 								?>
 
 								<div class="merchant-card"
+									data-name="<?= strtolower($d['merchant_name']); ?>"
 									data-search="<?= strtolower($d['merchant_name'].' '.$d['merchant_nick'].' '.$lpk); ?>"
 									data-lapak-count="<?= (int) $counter; ?>">
 									<div class="card-box">
@@ -1205,7 +1206,7 @@
 													<i class="fa fa-map-marker"></i> <?php echo $lpk ? $lpk : 'Tanpa lapak'; ?>
 												</div>
 											</div>
-											<button type="button"
+											<!-- <button type="button"
 												class="mc-del"
 												data-toggle="modal"
 												data-target="#deleteModal"
@@ -1215,7 +1216,7 @@
 												title="Hapus dari retail"
 												aria-label="Hapus <?php echo htmlspecialchars($d['merchant_name']); ?> dari retail">
 												<i class="fa fa-trash"></i>
-											</button>
+											</button> -->
 										</div>
 
 										<input type="hidden" name="merchant[]" value="<?php echo $d['merchant_id']; ?>">
@@ -1651,6 +1652,10 @@
 						sorted.sort(function (a, b) {
 							var diff = parseInt(b.dataset.lapakCount, 10) - parseInt(a.dataset.lapakCount, 10);
 							return mode === 'desc' ? diff : -diff;
+						});
+					} else {
+						sorted.sort(function (a, b) {
+							return (a.dataset.name || '').localeCompare(b.dataset.name || '');
 						});
 					}
 
