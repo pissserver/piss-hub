@@ -1248,7 +1248,7 @@
 									<span class="alert-reminder-title">Ingat!</span>
 									<span class="alert-reminder-text">Harap update data pedagang retail di setiap tanggal 1 awal bulan.</span>
 								</div>
-								<?php if ($retailUpdateDone): ?>
+								<!-- <?php if ($retailUpdateDone): ?>
 									<button type="button"
 										class="alert-reminder-btn"
 										disabled
@@ -1261,7 +1261,7 @@
 										title="Update data pedagang retail">
 										<i class="fa fa-rocket"></i> Update Pedagang
 									</a>
-								<?php endif; ?>
+								<?php endif; ?> -->
 							</div>
 
 							<div class="header-toolbar">
