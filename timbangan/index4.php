@@ -6,6 +6,40 @@
 		header("Location:login.html");
 	}
 	$checker 	= executeScalar("select checker_name from checker where checker_code = '".$_SESSION['checker']."'");
+
+	/* Cek update data pedagang retail (tabel merchant_retail_update) */
+	$retailLockShow   = false;
+	$retailLockDate   = date('Y-m-01');
+	$retailUpdateCol  = null;
+
+	$retailCols = @mysql_query("SHOW COLUMNS FROM merchant_retail_update");
+	if ($retailCols) {
+		$dateFallback = null;
+		while ($col = mysql_fetch_assoc($retailCols)) {
+			if (!preg_match('/date|time/i', $col['Type'])) continue;
+			if (preg_match('/period|periode|bulan|month|update|tanggal|date/i', $col['Field'])) {
+				$retailUpdateCol = $col['Field'];
+				break;
+			}
+			if ($dateFallback === null) $dateFallback = $col['Field'];
+		}
+		mysql_free_result($retailCols);
+		if ($retailUpdateCol === null) $retailUpdateCol = $dateFallback;
+	}
+
+	if ($retailUpdateCol !== null) {
+		$retailUpdateLatest = executeScalar("SELECT DATE(`".$retailUpdateCol."`) FROM merchant_retail_update ORDER BY `".$retailUpdateCol."` DESC LIMIT 1");
+		$retailLockShow = ((string) $retailUpdateLatest !== $retailLockDate);
+	}
+
+	$bulanIndo = array(
+		1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+		'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+	);
+	$retailLockDateLabel = (int) date('j', strtotime($retailLockDate)).' '
+		.$bulanIndo[(int) date('n', strtotime($retailLockDate))].' '
+		.date('Y', strtotime($retailLockDate));
+
 	function headScript(){
 		$headScript=file_get_contents("headScript.html");
 		return $headScript;
@@ -939,6 +973,177 @@
 		font-size:13px;
 		color:#aaa;
 	}
+
+	/* ===== RETAIL UPDATE LOCK MODAL ===== */
+	.retail-panel-lock {
+		position: relative;
+		min-height: 360px;
+	}
+
+	.retail-lock {
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		padding: 40px 20px;
+		border-radius: 4px;
+		background: rgba(15, 23, 42, 0.38);
+		-webkit-backdrop-filter: blur(8px) saturate(140%);
+		backdrop-filter: blur(8px) saturate(140%);
+		animation: retailLockFade 0.35s ease both;
+	}
+
+	@keyframes retailLockFade {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	.retail-lock-card {
+		position: relative;
+		width: 100%;
+		max-width: 460px;
+		padding: 38px 32px 32px;
+		text-align: center;
+		background:
+			radial-gradient(120% 90% at 50% 0%, rgba(99,102,241,0.16), transparent 60%),
+			linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+		border: 1px solid rgba(255,255,255,0.7);
+		border-radius: 24px;
+		box-shadow: 0 30px 80px rgba(15,23,42,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
+		overflow: hidden;
+		animation: retailLockPop 0.45s cubic-bezier(0.18, 0.9, 0.3, 1.15) both;
+	}
+
+	@keyframes retailLockPop {
+		from { opacity: 0; transform: translateY(18px) scale(0.95); }
+		to { opacity: 1; transform: translateY(0) scale(1); }
+	}
+
+	.retail-lock-card::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 5px;
+		background: linear-gradient(90deg, #6366f1, #8b5cf6 55%, #06b6d4);
+	}
+
+	.retail-lock-card::after {
+		content: "";
+		position: absolute;
+		top: -70px;
+		right: -70px;
+		width: 180px;
+		height: 180px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(139,92,246,0.22), transparent 70%);
+		pointer-events: none;
+	}
+
+	.retail-lock-icon {
+		position: relative;
+		width: 76px;
+		height: 76px;
+		margin: 0 auto 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 24px;
+		background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+		color: #fff;
+		font-size: 32px;
+		box-shadow: 0 16px 32px rgba(79,70,229,0.38);
+	}
+
+	.retail-lock-icon::after {
+		content: "";
+		position: absolute;
+		inset: -8px;
+		border: 2px solid rgba(99,102,241,0.22);
+		border-radius: 30px;
+		animation: retailLockPulse 2s ease-out infinite;
+	}
+
+	@keyframes retailLockPulse {
+		0% { transform: scale(0.9); opacity: 0.8; }
+		70% { transform: scale(1.12); opacity: 0; }
+		100% { transform: scale(1.12); opacity: 0; }
+	}
+
+	.retail-lock-title {
+		margin: 0 0 10px;
+		font-size: 21px;
+		font-weight: 800;
+		letter-spacing: -0.01em;
+		color: #1e1b4b;
+	}
+
+	.retail-lock-text {
+		margin: 0 0 6px;
+		font-size: 14px;
+		line-height: 1.6;
+		color: #475569;
+	}
+
+	.retail-lock-text strong {
+		color: #4f46e5;
+		font-weight: 700;
+		white-space: nowrap;
+	}
+
+	.retail-lock-note {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		margin-top: 18px;
+		padding: 10px 16px;
+		border-radius: 12px;
+		background: #eef2ff;
+		border: 1px solid #e0e7ff;
+		font-size: 12.5px;
+		font-weight: 600;
+		color: #4338ca;
+	}
+
+	.retail-lock-note i {
+		font-size: 13px;
+	}
+
+	.retail-lock-foot {
+		margin: 18px 0 0;
+		font-size: 11.5px;
+		color: #94a3b8;
+	}
+
+	@media (max-width: 480px) {
+		.retail-lock {
+			padding: 28px 14px;
+		}
+		.retail-lock-card {
+			padding: 30px 22px 26px;
+			border-radius: 20px;
+		}
+		.retail-lock-icon {
+			width: 64px;
+			height: 64px;
+			font-size: 27px;
+			border-radius: 20px;
+		}
+		.retail-lock-title {
+			font-size: 18px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.retail-lock,
+		.retail-lock-card,
+		.retail-lock-icon::after {
+			animation: none;
+		}
+	}
 </style>
 
 <!DOCTYPE html>
@@ -1038,7 +1243,7 @@
                         <div class="panel-heading">
                             <i class="fa fa-users fa-fw"></i> Data Pedagang Retail
                         </div>
-                        <div class="panel-body">
+                        <div class="panel-body<?= $retailLockShow ? ' retail-panel-lock' : ''; ?>">
 							<div class="header-toolbar">
 								<div class="search-wrapper">
 									<i class="fa fa-search"></i>
@@ -1305,6 +1510,23 @@
 									</div>
 								<?php } ?>
 							</form>
+
+							<?php if ($retailLockShow): ?>
+							<div class="retail-lock" id="retailLock" role="dialog" aria-modal="true" aria-labelledby="retailLockTitle">
+								<div class="retail-lock-card">
+									<div class="retail-lock-icon"><i class="fa fa-lock"></i></div>
+									<h3 class="retail-lock-title" id="retailLockTitle">Update Pedagang Retail Belum Dilakukan</h3>
+									<p class="retail-lock-text">
+										Data pedagang retail di tanggal <strong><?= $retailLockDateLabel; ?></strong>
+										belum diupdate oleh PP.
+									</p>
+									<div class="retail-lock-note">
+										<i class="fa fa-bullhorn"></i> Hubungi PP untuk melakukan update data pedagang retail.
+									</div>
+									<p class="retail-lock-foot">Panel ini terkunci sampai data diperbarui.</p>
+								</div>
+							</div>
+							<?php endif; ?>
 						</div>
                     </div>
                 </div>
