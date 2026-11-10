@@ -3,10 +3,34 @@
     session_start();
     include "../connection.php";
 
-    $code = mysql_real_escape_string($_SESSION['checker']);
-    $result = mysql_query("SELECT checker_name FROM checker WHERE checker_code = '$code'");
-    $row = mysql_fetch_array($result);
-    $checker = $row['checker_name'];
+    $displayName = '';
+    
+    // Cek apakah checker/cashier atau admin
+    if (isset($_SESSION['checker']) && $_SESSION['checker'] != '') {
+        // Login sebagai checker/cashier
+        $code = mysql_real_escape_string($_SESSION['checker']);
+        $result = mysql_query("SELECT checker_name FROM checker WHERE checker_code = '$code'");
+        $row = mysql_fetch_array($result);
+        if ($row && $row['checker_name'] != '') {
+            $displayName = $row['checker_name'];
+        } else {
+            $displayName = $_SESSION['username'];
+        }
+    } elseif (isset($_SESSION['username']) && $_SESSION['username'] != '') {
+        // Login sebagai admin (SPV/PP/Keuangan)
+        $user = mysql_real_escape_string($_SESSION['username']);
+        $result = mysql_query("SELECT name, username FROM admin WHERE username = '$user'");
+        $row = mysql_fetch_array($result);
+        if ($row) {
+            // Pakai name kalau ada dan tidak kosong, kalau tidak pakai username
+            $displayName = ($row['name'] != '') ? $row['name'] : $row['username'];
+        } else {
+            $displayName = $_SESSION['username'];
+        }
+    } else {
+        // Fallback
+        $displayName = 'User';
+    }
 ?>
 
 <div class="animation-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; overflow: hidden;">
@@ -77,7 +101,7 @@
 
     // Typing effect for the title text
     const textElement = document.getElementById("typedText");
-    const textToType = "Selamat Datang, <?php echo $checker; ?>";
+    const textToType = "Selamat Datang, <?php echo $displayName; ?>";
     let currentIndex = 0;
 
     // Mulai teks dalam keadaan kosong dan tampilkan satu per satu
