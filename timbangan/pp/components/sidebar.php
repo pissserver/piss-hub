@@ -851,6 +851,8 @@
 
 						<li><a class="<?= isActive(['index5.php', 'listing.php']); ?>" href="index5.php"><i class="fa fa-search fa-fw"></i> <span>Listing Nota</span> </a></li>
 						
+						<li><a class="<?= isActive(['index4.php']); ?>" href="index4.php"><i class="fa fa-users fa-fw"></i> Pedagang Retail </a></li>
+						
 						<li class="<?= isParentActive(['cancel1.php', 'cancel2.php', 'cancel3.php', 'cancel4.php']); ?>"> 
 							<a href="#"><i class="fa fa-close fa-fw"></i> <span>Pembatalan</span><span class="fa arrow"></span></a>
 							<ul class="nav nav-second-level">

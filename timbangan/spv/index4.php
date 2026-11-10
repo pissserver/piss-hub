@@ -325,6 +325,116 @@
 		background-color: #e9ecef;
 	}
 
+	/* ALERT REMINDER — clean info banner */
+	.alert-reminder {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin: 0 10px 18px;
+		padding: 12px 46px 12px 14px;
+		border: 1px solid #e0e7ff;
+		border-left: 3px solid #6366f1;
+		border-radius: 12px;
+		background: linear-gradient(180deg, #f7f9ff 0%, #f2f5ff 100%);
+		box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+		color: #475569;
+		font-size: 13px;
+		line-height: 1.45;
+		animation: slideDown 0.35s ease both;
+	}
+
+	@keyframes slideDown {
+		from {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.alert-reminder-icon {
+		flex: 0 0 auto;
+		width: 34px;
+		height: 34px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		background: #e0e7ff;
+		color: #4f46e5;
+		font-size: 15px;
+	}
+
+	.alert-reminder-body {
+		min-width: 0;
+	}
+
+	.alert-reminder-title {
+		display: inline;
+		margin-right: 6px;
+		font-weight: 700;
+		color: #1e1b4b;
+	}
+
+	.alert-reminder-text {
+		display: inline;
+		color: #475569;
+	}
+
+	.alert-reminder .close {
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		width: 26px;
+		height: 26px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0;
+		padding: 0;
+		transform: translateY(-50%);
+		border-radius: 7px;
+		color: #94a3b8;
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1;
+		opacity: 1;
+		text-shadow: none;
+		transition: background 0.15s, color 0.15s;
+	}
+
+	.alert-reminder .close span {
+		line-height: 1;
+	}
+
+	.alert-reminder .close:hover,
+	.alert-reminder .close:focus {
+		background: #e0e7ff;
+		color: #4f46e5;
+		outline: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.alert-reminder {
+			animation: none;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.alert-reminder {
+			align-items: flex-start;
+			padding: 12px 42px 12px 12px;
+		}
+		.alert-reminder-icon {
+			width: 30px;
+			height: 30px;
+			font-size: 13px;
+		}
+	}
+
 	/* HEADER TOOLBAR — search + filter + total retail */
 	.header-toolbar {
 		display: flex;
@@ -1032,7 +1142,17 @@
                         <div class="panel-heading">
                             <i class="fa fa-users fa-fw"></i> Data Pedagang Retail
                         </div>
-                        <div class="panel-body">
+						<div class="panel-body">
+							<div class="alert-reminder" role="alert">
+								<div class="alert-reminder-icon">
+									<i class="fa fa-bullhorn"></i>
+								</div>
+								<div class="alert-reminder-body">
+									<span class="alert-reminder-title">Ingat!</span>
+									<span class="alert-reminder-text">Harap update data pedagang retail di awal bulan.</span>
+								</div>
+							</div>
+
 							<div class="header-toolbar">
 								<div class="search-wrapper">
 									<i class="fa fa-search"></i>
