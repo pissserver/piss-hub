@@ -42,6 +42,19 @@ $hubApps = [
 	'listrik' => ['label' => 'Listrik', 'icon' => 'fa-bolt'],
 ];
 $hubApp = isset($hubApps[$hubCurrent]) ? $hubApps[$hubCurrent] : ['label' => 'PISS Hub', 'icon' => 'fa-th-large'];
+$hubVersionTables = [
+	'timbangan' => 'update_timbangan',
+	'lapak' => 'update_lapak',
+	'listrik' => 'update_listrik',
+];
+$hubVersion = '';
+if (isset($hubVersionTables[$hubCurrent])) {
+	$hubVersionQuery = mysql_query("SELECT version FROM ".$hubVersionTables[$hubCurrent]." ORDER BY id DESC LIMIT 1") or die(mysql_error());
+	$hubVersionData = mysql_fetch_assoc($hubVersionQuery);
+	if ($hubVersionData && $hubVersionData['version'] !== '') {
+		$hubVersion = $hubVersionData['version'];
+	}
+}
 $hubAppPath = $hubBase.'/'.$hubCurrent.'/dashboard.php';
 $hubActiveTabIndex = 0;
 foreach ($hubTabs as $index => $tab) {
@@ -54,10 +67,15 @@ foreach ($hubTabs as $index => $tab) {
 $hubTabCount = max(count($hubTabs), 1);
 $hubTabWidth = 100 / $hubTabCount;
 ?>
-<a class="hub-brand" href="<?= htmlspecialchars($hubAppPath, ENT_QUOTES, 'UTF-8') ?>" aria-label="<?= htmlspecialchars($hubApp['label'], ENT_QUOTES, 'UTF-8') ?> PISS">
+<a class="hub-brand" href="<?= htmlspecialchars($hubAppPath, ENT_QUOTES, 'UTF-8') ?>" aria-label="<?= htmlspecialchars($hubApp['label'], ENT_QUOTES, 'UTF-8') ?>">
 	<span class="hub-brand-mark"><i class="fa <?= $hubApp['icon'] ?>" aria-hidden="true"></i></span>
 	<span class="hub-brand-copy">
-		<strong class="hub-brand-name"><?= htmlspecialchars($hubApp['label'], ENT_QUOTES, 'UTF-8') ?> PISS</strong>
+		<span class="hub-brand-title">
+			<strong class="hub-brand-name"><?= htmlspecialchars($hubApp['label'], ENT_QUOTES, 'UTF-8') ?></strong>
+			<?php if ($hubVersion !== '') : ?>
+				<span class="hub-brand-version">v<?= htmlspecialchars($hubVersion, ENT_QUOTES, 'UTF-8') ?></span>
+			<?php endif; ?>
+		</span>
 		<span class="hub-brand-caption">PISS HUB WORKSPACE</span>
 	</span>
 </a>
@@ -85,7 +103,9 @@ $hubTabWidth = 100 / $hubTabCount;
 	.hub-brand:focus{outline:2px solid #93c5fd;outline-offset:2px;}
 	.hub-brand-mark{display:flex;flex:0 0 40px;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:linear-gradient(145deg,#38bdf8,#2563eb);color:#fff;font-size:17px;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 5px 12px rgba(37,99,235,.25);}
 	.hub-brand-copy{display:flex;min-width:0;flex-direction:column;gap:3px;}
+	.hub-brand-title{display:flex;min-width:0;align-items:center;gap:6px;}
 	.hub-brand-name{overflow:hidden;color:#f8fafc;font-size:14px;font-weight:700;letter-spacing:.045em;text-overflow:ellipsis;white-space:nowrap;}
+	.hub-brand-version{flex:none;padding:2px 5px;border:1px solid rgba(147,197,253,.28);border-radius:6px;background:rgba(37,99,235,.16);color:#bfdbfe;font-size:9px;font-weight:700;letter-spacing:.02em;line-height:1.2;}
 	.hub-brand-caption{color:#94a3b8;font-size:9px;font-weight:700;letter-spacing:.16em;white-space:nowrap;}
 	#hub-tabs{margin:0 12px;padding:0 0 12px;border-bottom:1px solid rgba(148,163,184,.14);}
 	.hub-tabs-track{position:relative;display:flex;min-width:0;padding:0;border:1px solid rgba(148,163,184,.12);border-radius:12px;background:rgba(4,12,24,.3);}
