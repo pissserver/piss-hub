@@ -107,6 +107,7 @@
 				$x		= $x+$r['tot'];
 			}
 		?>
+		
 		<tr>
 			<td style="vertical-align: middle; text-align: center;border: solid 1px black;" colspan="5"><b>TOTAL </b></td>
 			<td style="vertical-align: middle; text-align: center;border: solid 1px black;font-weight:bold;"><?php echo format_no($x); ?> </td>
