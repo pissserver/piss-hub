@@ -63,13 +63,22 @@
                             <i class="fa fa-pencil fa-fw"></i> Form Pendaftaran Pedagang
                         </div>
                         <div class="panel-body">
+							<div class="alert alert-info" role="note" style="border-left: 5px solid #31708f; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.08); padding: 15px 18px; margin-bottom: 20px;">
+								<div style="display: flex; align-items: flex-start;">
+									<i class="fa fa-info-circle" aria-hidden="true" style="font-size: 24px; margin: 2px 12px 0 0; color: #31708f;"></i>
+									<div>
+										<strong style="font-size: 15px;">Panduan pendaftaran</strong>
+										<div style="margin-top: 5px;">Belum registrasi? Isi Nama Alias dengan <strong>UNREG</strong>. Nomor identitas tidak tersedia? Kolom No Identitas dapat dikosongkan.</div>
+									</div>
+								</div>
+							</div>
                             <form action="register_action.php?task=insert"  id="formRegister" name = "formRegister" method="POST" class="form-horizontal">
 								<fieldset>
 									<div class="row">
 										<div class="col-lg-6" style="padding:0 10px 0 20px">
 											<label>Nama</label>
 											<input id="name1" name="name1" placeholder="Nama Sesuai Ktp" type="text" class="form-control" autofocus="autofocus" required>    
-											<input style="margin-top: 5px;" id="name2" name="name2" placeholder="Nama Alias" type="text" class="form-control">          
+											<input style="margin-top: 5px;" id="name2" name="name2" placeholder="Nama Alias" type="text" class="form-control" required>          
 										</div>
 
 										<div class="col-lg-6" style="padding:0 20px 0 10px;">
@@ -100,7 +109,7 @@
 													</div>
 												</div>
 												
-											<select style="margin-top: 5px;" class="form-control" name="nid" id="nid" required>
+											<select style="margin-top: 5px;" class="form-control" name="nid" id="nid">
 												<option value="">Jenis Identitas Yang Diisi</option>
 												<option value="KTP">KTP</option>
 												<option value="SIM">SIM</option>
@@ -136,8 +145,8 @@
 
 										<div class="col-lg-4" style="padding:0 10px 0 10px; margin-top: 15px;">
 											<label>Jenis Pedagang</label>
-											<select class="form-control " name="kat_merchant" id="kat_merchant" >
-												<option value="0" selected disabled>-- Pilih Jenis Pedagang --</option>
+											<select class="form-control " name="kat_merchant" id="kat_merchant" required>
+												<option value="">-- Pilih Jenis Pedagang --</option>
 												<option value="Tetap">Tetap</option>
 												<option value="Trial Lapak">Trial Lapak</option>
 												<option value="Trial Lapak Jalan">Trial Lapak Jalan</option>
@@ -146,8 +155,8 @@
 
 										<div class="col-lg-4" style="padding:0 20px 0 10px; margin-top: 15px;">
 											<label>Asal Pasar</label>
-											<select class="form-control" name="asal_pasar" id="asal_pasar" >
-												<option value="0" selected disabled>-- Pilih Asal Pasar --</option>
+											<select class="form-control" name="asal_pasar" id="asal_pasar" required>
+												<option value="">-- Pilih Asal Pasar --</option>
 												<option value="Belum Pernah">Belum Pernah</option>
 												<option value="Pasar Osowilangun">Pasar Osowilangun</option>
 												<option value="Pasar Pandegiling">Pasar Pandegiling</option>

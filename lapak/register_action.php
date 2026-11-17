@@ -18,7 +18,7 @@
 		if($_POST['ktp']!=''){
 			$ktp 	= executeScalar("select count(nid_ktp) from request where nid_ktp = '".$_POST['ktp']."'");
 			if($ktp>0){
-				echo "<script>window.alert('No ID Pedagang sudah ada, mohon dicek lagi');
+				echo "<script>window.alert('No Identitas Pedagang sudah ada, mohon dicek lagi');
 				window.history.back()</script>";
 				exit();
 			}
@@ -30,7 +30,7 @@
 		elseif($_POST['sim']!=''){
 			$sim 	= executeScalar("select count(nid_sim)from request where nid_sim = '".$_POST['sim']."'");
 			if($sim>0){
-				echo "<script>window.alert('No ID Pedagang sudah ada, mohon dicek lagi');
+				echo "<script>window.alert('No Identitas Pedagang sudah ada, mohon dicek lagi');
 				window.history.back()</script>";
 				exit();
 			}
@@ -42,7 +42,7 @@
 		elseif($_POST['lain']!=''){
 			$lain 	= executeScalar("select count(nid_lain) from request where nid_lain = '".$_POST['lain']."'");
 			if($lain>0){
-				echo "<script>window.alert('No ID Pedagang sudah ada, mohon dicek lagi');
+				echo "<script>window.alert('No Identitas Pedagang sudah ada, mohon dicek lagi');
 				window.history.back()</script>";
 				exit();
 			}
@@ -56,20 +56,6 @@
 			$sim 	= null;
 			$lain 	= null;
 			$nid 	= null;
-		}
-
-		// Pengecekan apakah sudah melakukan pengisian kategori merchant
-		if($_POST['kat_merchant']=='0'){
-			echo "<script>window.alert('Silahkan pilih jenis pedagang dahulu !');
-				window.history.back()</script>";
-			exit();
-		}
-
-		// Pengecekan apakah sudah melakukan pengisian asal pasar
-		if($_POST['asal_pasar']=='0'){
-			echo "<script>window.alert('Silahkan pilih asal pasar dahulu !');
-				window.history.back()</script>";
-			exit();
 		}
 
 		//jika adrs2 kosong
