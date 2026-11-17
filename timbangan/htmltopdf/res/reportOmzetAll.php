@@ -66,8 +66,8 @@
 			<th style="vertical-align: middle; text-align: center;width: 10%;border: solid 1px black;">JENIS</th>
 			<th style="vertical-align: middle; text-align: center;width: 15%;border: solid 1px black;">LAPAK</th>
 			<th style="vertical-align: middle; text-align: center;width: 8%;border: solid 1px black;">JUMLAH TIMBANG</th>
-			<th style="vertical-align: middle; text-align: center;width: 10%;border: solid 1px black;">RATA-RATA TONASE HARIAN (KG)</th>
 			<th style="vertical-align: middle; text-align: center;width: 10%;border: solid 1px black;">TONASE (KG)</th>
+			<th style="vertical-align: middle; text-align: center;width: 10%;border: solid 1px black;">RATA-RATA TONASE (KG)</th>
 		</tr>
 		<?php
 			$query 		= mysql_query($sql);
@@ -86,7 +86,8 @@
 					$counter++;
 				}
 				$lapak 	= "".$string;
-				$mean	= $r['total']/$diff;
+				// $mean	= $r['total']/$diff;
+				$mean	= $r['total']/$r['tot'];
 
 		?>
 		<tr>
@@ -95,9 +96,9 @@
 			<td style="vertical-align: middle; text-align: left;border: solid 1px black;"><?php echo $r['name']; ?></td>
 			<td style="vertical-align: middle; text-align: center;border: solid 1px black;"><?php echo $r['type']; ?></td>
 			<td style="vertical-align: middle; text-align: left;width: 15%;border: solid 1px black;"><?php echo $lapak; ?></td>
-			<td style="vertical-align: middle; text-align: center;border: solid 1px black;"><?php echo format_no($r['tot']); ?></td>
-			<td style="vertical-align: middle; text-align: right;border: solid 1px black;"><?php echo format_no($mean); ?> </td>
+			<td style="vertical-align: middle; text-align: center;border: solid 1px black;"><?php echo format_no($r['tot']); ?> Kali</td>
 			<td style="vertical-align: middle; text-align: right;border: solid 1px black;"><?php echo format_no($r['total']); ?> </td>
+			<td style="vertical-align: middle; text-align: right;border: solid 1px black;"><?php echo format_no($mean); ?> </td>
 		</tr>
 		<?php
 				$no++;
@@ -109,8 +110,8 @@
 		<tr>
 			<td style="vertical-align: middle; text-align: center;border: solid 1px black;" colspan="5"><b>TOTAL </b></td>
 			<td style="vertical-align: middle; text-align: center;border: solid 1px black;font-weight:bold;"><?php echo format_no($x); ?> </td>
-			<td style="vertical-align: middle; text-align: right;border: solid 1px black;font-weight:bold;"><?php echo format_no($mean_total); ?> </td>
 			<td style="vertical-align: middle; text-align: right;border: solid 1px black;font-weight:bold;"><?php echo format_no($total); ?> </td>
+			<td style="vertical-align: middle; text-align: right;border: solid 1px black;font-weight:bold;"><?php echo format_no($mean_total); ?> </td>
 		</tr>
 	</table>
 	<br />

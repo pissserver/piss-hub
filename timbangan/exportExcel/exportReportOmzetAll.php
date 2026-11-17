@@ -9,12 +9,6 @@
 	$sort		= $_POST['sortir'];
 	$date 		= date("d M Y");
 
-    //Hitung Selisih Antara Hari Awal & Akhir
-    $date3 = new DateTime($date1);
-    $date4 = new DateTime($date2);
-    $diff = $date3->diff($date4)->days + 1;
-    
-
     // Query untuk mengambil data
     if($commodity=='Semua'){
 		$sql = "select m.merchant_id as id, m.merchant_name as name, m.merchant_type as type, 
@@ -81,8 +75,8 @@
           ->setCellValue("D6", "JENIS PEDAGANG")
           ->setCellValue("E6", "LAPAK")
           ->setCellValue("F6", "JUMLAH TIMBANG")
-          ->setCellValue("G6", "RATA-RATA TONASE HARIAN (KG)")
-          ->setCellValue("H6", "TONASE (KG)");
+          ->setCellValue("G6", "TONASE (KG)")
+          ->setCellValue("H6", "RATA-RATA TONASE (KG)");
 
     // Mengatur warna latar belakang hijau untuk header
     // $sheet->getStyle('A1:I1')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
@@ -115,7 +109,7 @@
         }
 
         $lapak 	    = "".$string;
-        $mean       = round($data['total'] / $diff);
+        $mean       = round($data['total'] / $data['tot']);
 
 
         // Meratakan semua teks ke tengah, kecuali kolom C, E (Pedagang, Jenis)
@@ -131,11 +125,12 @@
                ->setCellValue("D" . $row, $data['type'])
                ->setCellValue("E" . $row, $lapak)
                ->setCellValue("F" . $row, $data['tot'])
-               ->setCellValue("G" . $row, $mean)
-               ->setCellValue("H" . $row, $data['total']);
+               ->setCellValue("G" . $row, $data['total'])
+               ->setCellValue("H" . $row, $mean);
 
         // Membuat format menjadi number
-        $sheet1->getStyle("F" . $row . ":H" . $row)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet1->getStyle("F" . $row)->getNumberFormat()->setFormatCode('#,##0 "Kali"');
+        $sheet1->getStyle("G" . $row . ":H" . $row)->getNumberFormat()->setFormatCode('#,##0');
 
         $no++;
         $row++;
