@@ -145,12 +145,13 @@
 
 										<div class="col-lg-4" style="padding:0 10px 0 10px; margin-top: 15px;">
 											<label>Jenis Pedagang</label>
-											<select class="form-control " name="kat_merchant" id="kat_merchant" required>
+											<!-- <select class="form-control " name="kat_merchant" id="kat_merchant" required>
 												<option value="">-- Pilih Jenis Pedagang --</option>
 												<option value="Tetap">Tetap</option>
 												<option value="Trial Lapak">Trial Lapak</option>
 												<option value="Trial Lapak Jalan">Trial Lapak Jalan</option>
-											</select>
+											</select> -->
+											<input type="text" class="form-control" name="kat_merchant" id="kat_merchant" value="Tetap" required readonly>
 										</div>
 
 										<div class="col-lg-4" style="padding:0 20px 0 10px; margin-top: 15px;">

@@ -92,9 +92,7 @@
 					echo '<center><a style="text-decoration: none;" href="register_acc.php?id='.$data['req_id'].'">
 						<button style="margin-top: 5px;" class="btn btn-outline btn-block btn-success btn-xs"><i class="fa fa-check fa-fw"></i>Setujui</button>
 					</a></center>';
-					echo '<center><a style="text-decoration: none;" data-toggle="modal" data-target="#modalCancel" href="#">
-						<button style="margin-top: 5px;" class="btn btn-outline btn-block btn-danger btn-xs"><i class="fa fa-times fa-fw"></i>Batalkan</button>
-					</a></center>';
+					echo '<center><button type="button" style="margin-top: 5px;" class="btn btn-outline btn-block btn-danger btn-xs" data-toggle="modal" data-target="#modalCancel" data-request-id="'.(int)$data['req_id'].'" data-request-name="'.htmlspecialchars($data['req_name'], ENT_QUOTES, 'UTF-8').'" data-lapak-name="'.htmlspecialchars($lapak, ENT_QUOTES, 'UTF-8').'"><i class="fa fa-times fa-fw"></i>Batalkan</button></center>';
 				}
 				else{
 					echo '';
@@ -102,38 +100,45 @@
 			?>
 			</td>
 		</tr>
-
-
-		<!-- Modal Cancel -->
-			<div class="modal fade" id="modalCancel" tabindex="-1" role="dialog" aria-labelledby="modalCancelLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-						<div class="modal-header bg-primary text-white" style="border-top-left-radius: 5px; border-top-right-radius: 5px;">
-							<h5 class="modal-title" id="modalCancelLabel"><b>KONFIRMASI BATAL PENDAFTARAN</b></h5>
-							<button style="margin-top: -20px;" type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<p>Apakah Anda yakin ingin membatalkan pendaftaran pedagang?</p>
-							<div class="bg-primary" 
-								style="color:#fff; padding:4px; border-radius:5px; display:inline-block;">
-								<i class="fa fa-user fa-fw d-in"></i>&nbsp;<?php echo $data['req_name']; ?>
-							</div>
-							<div class="bg-primary" 
-								style="color:#fff; padding:4px; border-radius:5px; display:inline-block;">
-								<i class="fa fa-th fa-fw d-in"></i>&nbsp;<?php echo $lapak; ?>
-							</div>
-							<br><br>
-							<p><b>Catatan:</b> Data pendaftaran yang dibatalkan tidak dapat dikembalikan lagi!</p>
-						</div>
-						<div class="modal-footer d-flex justify-content-between">
-							<button type="button" class="btn btn-danger" data-dismiss="modal">Tidak</button>
-							<a href="register_action.php?task=cancel&id=<?php echo $data['req_id'] ?>" class="btn btn-primary">Ya, batalkan</a>
-						</div>
-					</div>
-				</div>
-			</div>
 		<?php $no++; } ?>
 	</tbody>
 </table>
+
+<!-- Modal Cancel -->
+<div class="modal fade" id="modalCancel" tabindex="-1" role="dialog" aria-labelledby="modalCancelLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white" style="border-top-left-radius: 5px; border-top-right-radius: 5px;">
+				<h5 class="modal-title" id="modalCancelLabel"><b>KONFIRMASI BATAL PENDAFTARAN</b></h5>
+				<button style="margin-top: -20px;" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Apakah Anda yakin ingin membatalkan pendaftaran pedagang?</p>
+				<div class="bg-primary" style="color:#fff; padding:4px; border-radius:5px; display:inline-block;">
+					<i class="fa fa-user fa-fw d-in"></i>&nbsp;<span id="cancelRequestName"></span>
+				</div>
+				<div class="bg-primary" style="color:#fff; padding:4px; border-radius:5px; display:inline-block;">
+					<i class="fa fa-th fa-fw d-in"></i>&nbsp;<span id="cancelLapakName"></span>
+				</div>
+				<br><br>
+				<p><b>Catatan:</b> Data pendaftaran yang dibatalkan tidak dapat dikembalikan lagi!</p>
+			</div>
+			<div class="modal-footer d-flex justify-content-between">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">Tidak</button>
+				<a id="confirmCancelRequest" href="#" class="btn btn-primary">Ya, batalkan</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$('#modalCancel').on('show.bs.modal', function(event) {
+		var button = $(event.relatedTarget);
+		var requestId = button.attr('data-request-id');
+
+		$('#cancelRequestName').text(button.attr('data-request-name'));
+		$('#cancelLapakName').text(button.attr('data-lapak-name'));
+		$('#confirmCancelRequest').attr('href', 'register_action.php?task=cancel&id=' + encodeURIComponent(requestId));
+	});
+</script>
