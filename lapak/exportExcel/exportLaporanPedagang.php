@@ -103,7 +103,7 @@
         $sql2 	= mysql_query("select l.lapak_name from rent r, lapak l
                 where r.lapak_id = l.lapak_id and 
                 r.merchant_id = '".$data['merchant_id']."' and
-                r.rent_sts2 != 'Pindah'
+                (r.rent_sts2 != 'Pindah' && r.rent_sts2 != 'Batal')
                 order by l.lapak_name limit 7");
         $string	= "";
         $counter= 0;
