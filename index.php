@@ -51,7 +51,7 @@
                         </div>
 
                         <span class="login100-form-title">
-                            Selamat datang <span class="hub-grad-text">!</span>
+                            Selamat datang <span class="hub-grad-text">kembali</span>
                         </span>
                         <p class="hub-login-intro">
                             Masuk untuk melanjutkan ke dashboard operasional Anda.
