@@ -12,19 +12,41 @@ concurrency:
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64]
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     steps:
-      - name: Update application
+      - name: Update XAMPP source code
         run: |
           set -e
           cd /opt/lampp/htdocs/piss-hub
           git fetch origin master
           git reset --hard origin/master
 
+      - name: Update Docker source code
+        run: |
+          set -e
+          cd /srv/docker/projects/piss-hub
+          git fetch origin master
+          git reset --hard origin/master
+
+      - name: Build and restart Docker
+        run: |
+          set -e
+          cd /srv/docker/projects/piss-hub
+          docker compose up -d --build
+
       - name: Verify deployment
         run: |
           set -e
+
           test -f /opt/lampp/htdocs/piss-hub/index.php
           test -d /opt/lampp/htdocs/piss-hub/uploads
-          echo "PISS Hub deployment successful"
+
+          test -f /srv/docker/projects/piss-hub/index.php
+          docker compose -f /srv/docker/projects/piss-hub/docker-compose.yml ps
+
+          curl --fail --silent --show-error \
+            --retry 10 --retry-delay 3 --retry-connrefused \
+            http://127.0.0.1:3001/ > /dev/null
+
+          echo "PISS Hub XAMPP and Docker deployment successful"
