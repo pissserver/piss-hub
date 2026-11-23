@@ -46,7 +46,7 @@
 					<br /><br><br><br>
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="fa fa-truck fa-fw"></i> Data Kendaraan Keluar
+                            <i class="fa fa-truck fa-fw"></i> Data Tagihan/Nota
                         </div>
                         <div class="panel-body">
 							<div class="row">

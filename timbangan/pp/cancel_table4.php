@@ -32,9 +32,8 @@
 	<tbody>
 		<?php
 			$no		= 1;
-			$date_plus 	= strtotime('-90 day', strtotime($date_now));
-			$yesterday	= date('Y-m-j' , $date_plus);
-			$query 	= mysql_query("select * from weighing where (date_in  between '$yesterday' and '$date_now') and weighing_sts = 'Keluar' order by weighing_id desc");
+			$one_year_ago = date('Y-m-d', strtotime('-1 year', strtotime($date_now)));
+			$query 	= mysql_query("select * from weighing where (date_in between '$one_year_ago' and '$date_now') and weighing_sts = 'Keluar' and weighing_sts6 IS NULL order by weighing_id desc");
 			while($data=mysql_fetch_array($query)){
 			$merchant = executeScalar("select merchant_name from merchant where merchant_id = '".$data['merchant_id']."'");
 			$goods 	= executeScalar("select goods_name from goods where goods_id = '".$data['goods_id']."'");
@@ -88,12 +87,7 @@
 			<td style="text-align: center; vertical-align: middle;">
 				<!-- Button HTML (to Trigger Modal) -->
 				<?php
-					$status = executeScalar("select weighing_sts6 from weighing where weighing_id = '".$data['weighing_id']."'");
-					if($status === 'Ditangguhkan'){
-						echo "<a class='btn btn-xs btn-outline btn-primary modalCancelOut' data-toggle='modal' data-target='#modalCancelOut' data-id='" . $data['weighing_id'] . "' data-status='Aktifkan'><i class='fa fa-play fa-fw'></i>&nbsp;Aktifkan</a>";	
-					}else{
-						echo "<a class='btn btn-xs btn-outline btn-warning modalCancelOut' data-toggle='modal' data-target='#modalCancelOut' data-id='" . $data['weighing_id'] . "' data-status='Tangguhkan'><i class='fa fa-pause fa-fw'></i>&nbsp;Tangguhkan</a>";	
-					}
+					echo "<a class='btn btn-xs btn-outline btn-danger modalCancelOut' data-toggle='modal' data-target='#modalCancelOut' data-id='" . $data['weighing_id'] . "' data-status='Tangguhkan'><i class='fa fa-close fa-fw'></i>&nbsp;Tidak Terbayar</a>";	
 				?>
 			</td>
 		</tr>
