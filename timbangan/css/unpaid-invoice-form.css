@@ -1,0 +1,110 @@
+.unpaid-invoice-panel .panel-heading {
+	background: linear-gradient(110deg, #173b67, #176d73) !important;
+	color: #fff !important;
+}
+
+.unpaid-invoice-panel .panel-body {
+	padding: 22px;
+}
+
+.unpaid-invoice-intro {
+	margin-bottom: 18px;
+	color: #607087;
+}
+
+.unpaid-invoice-rows {
+	display: grid;
+	gap: 12px;
+}
+
+.unpaid-invoice-row {
+	padding: 14px;
+	border: 1px solid #e1e8f0;
+	border-radius: 12px;
+	background: #fbfcfe;
+}
+
+.unpaid-invoice-row label {
+	display: block;
+	margin-bottom: 7px;
+	color: #263b55;
+	font-weight: 600;
+}
+
+.unpaid-invoice-controls {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+}
+
+.unpaid-invoice-controls .select2-container {
+	flex: 1;
+}
+
+.unpaid-invoice-controls .select2-container--default .select2-selection--single {
+	height: 44px;
+	border-color: #d3deea;
+	border-radius: 8px;
+}
+
+.unpaid-invoice-controls .select2-container--default .select2-selection--single .select2-selection__rendered {
+	padding-top: 7px;
+	color: #31445d;
+	line-height: 28px;
+}
+
+.unpaid-invoice-controls .select2-container--default .select2-selection--single .select2-selection__arrow {
+	top: 8px;
+	right: 5px;
+}
+
+.unpaid-invoice-controls .remove-unpaid-invoice {
+	width: 44px;
+	height: 44px;
+	flex: 0 0 44px;
+	border-color: #eadbdb;
+	border-radius: 8px;
+	color: #a33a3a;
+}
+
+.unpaid-invoice-controls .remove-unpaid-invoice:disabled {
+	opacity: .45;
+}
+
+.unpaid-invoice-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 16px;
+}
+
+.unpaid-invoice-actions .btn {
+	min-height: 44px;
+	padding: 10px 14px;
+	border-radius: 8px;
+}
+
+.unpaid-invoice-actions .btn-primary {
+	border-color: #176d73;
+	background: #176d73;
+}
+
+.unpaid-invoice-empty {
+	margin: 14px 0 0;
+	color: #8a5c21;
+	font-size: 13px;
+}
+
+@media (max-width: 600px) {
+	.unpaid-invoice-panel .panel-body {
+		padding: 16px;
+	}
+
+	.unpaid-invoice-actions {
+		display: grid;
+	}
+
+	.unpaid-invoice-actions .btn {
+		width: 100%;
+	}
+}
