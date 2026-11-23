@@ -6,6 +6,15 @@
     $v_lapak = mysql_fetch_array($version_lapak);
     $version_listrik = mysql_query("SELECT version FROM update_listrik ORDER BY id DESC LIMIT 1");
     $v_listrik = mysql_fetch_array($version_listrik);
+    $latest_update_query = mysql_query("SELECT id, version, title FROM update_timbangan ORDER BY id DESC LIMIT 1");
+    $latest_update = mysql_fetch_array($latest_update_query);
+    $latest_update_descriptions = array();
+    if ($latest_update) {
+        $latest_desc_query = mysql_query("SELECT description FROM update_desc_timbangan WHERE update_timbangan_id = '" . mysql_real_escape_string($latest_update['id']) . "' LIMIT 2");
+        while ($latest_desc = mysql_fetch_array($latest_desc_query)) {
+            $latest_update_descriptions[] = $latest_desc['description'];
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -62,6 +71,23 @@
                             <span class="hub-version"><i class="fa fa-building" aria-hidden="true"></i> Lapak v<?php echo $v_lapak['version']; ?></span>
                             <span class="hub-version"><i class="fa fa-bolt" aria-hidden="true"></i> Listrik v<?php echo $v_listrik['version']; ?></span>
                         </div>
+
+                        <?php if ($latest_update) { ?>
+                            <section class="hub-latest-update" aria-label="Pembaruan Timbangan terbaru">
+                                <div class="hub-latest-update-heading">
+                                    <span><i class="fa fa-star" aria-hidden="true"></i> Update terbaru</span>
+                                    <span class="hub-latest-update-version">v<?php echo htmlspecialchars($latest_update['version'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                </div>
+                                <h2><?php echo htmlspecialchars($latest_update['title'], ENT_QUOTES, 'UTF-8'); ?></h2>
+                                <?php if (count($latest_update_descriptions) > 0) { ?>
+                                    <ul>
+                                        <?php foreach ($latest_update_descriptions as $description) { ?>
+                                            <li><?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?></li>
+                                        <?php } ?>
+                                    </ul>
+                                <?php } ?>
+                            </section>
+                        <?php } ?>
 
                         <div class="wrap-input100 validate-input" data-validate="Username is required">
                             <i class="fa fa-user hub-input-icon" aria-hidden="true"></i>

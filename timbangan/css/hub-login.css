@@ -350,6 +350,72 @@ body.hub-login-page {
 .hub-login-page .hub-version:nth-child(3)::before { animation-delay: 1.2s; }
 .hub-login-page .hub-version:nth-child(3) i { color: #fcd34d; }
 
+.hub-login-page .hub-latest-update {
+  margin: -14px 0 24px;
+  padding: 14px 16px;
+  border: 1px solid rgba(148, 163, 184, .24);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, .72), rgba(15, 23, 42, .62));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .06), 0 12px 28px rgba(2, 6, 23, .12);
+}
+
+.hub-latest-update-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #a7f3d0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hub-latest-update-version {
+  padding: 4px 8px;
+  border: 1px solid rgba(110, 231, 183, .28);
+  border-radius: 20px;
+  background: rgba(16, 185, 129, .12);
+  color: #d1fae5;
+  letter-spacing: .3px;
+}
+
+.hub-login-page .hub-latest-update h2 {
+  margin: 10px 0 0;
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.hub-login-page .hub-latest-update ul {
+  display: grid;
+  gap: 6px;
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hub-login-page .hub-latest-update li {
+  position: relative;
+  padding-left: 15px;
+  color: #cbd5e1;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.hub-login-page .hub-latest-update li::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #6ee7b7;
+  content: "\2022";
+  font-size: 17px;
+  line-height: 1.1;
+}
+
 .hub-login-page .illustration {
   display: none;
 }

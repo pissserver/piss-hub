@@ -21,6 +21,7 @@
 		<title>Update Log | PISS</title>
 
 		<?php echo headScript(); ?>
+		<link href="../css/changelog-premium.css" rel="stylesheet">
 	</head>
 	<body>
 		<div id="wrapper">
@@ -31,6 +32,8 @@
 				<?php 
 					$username	= $_SESSION['username'];
 					$privileges = executeScalar("SELECT privileges FROM admin WHERE username = '$username'");
+					$canEditChangelog = isset($_SESSION['role']) && $_SESSION['role'] == 'spv';
+					$changelogEditToken = hash('sha256', session_id() . '|changelog-edit');
 					if ($privileges == 'developer') { ?>
 
 					<div class="row">
@@ -72,6 +75,15 @@
 											<!-- Tempat untuk input deskripsi otomatis -->
 											<div id="desc-wrapper"></div>
 
+											<div class="form-group" style="padding:10px; margin-top:-5px; margin-bottom:0px;">
+												<label for="signature-pad">Tanda Tangan</label>
+												<p class="help-block">Gunakan mouse atau sentuh area di bawah untuk membubuhkan tanda tangan.</p>
+												<canvas id="signature-pad" width="900" height="180" role="img" aria-label="Area untuk menggambar tanda tangan" tabindex="0" style="display:block; width:100%; height:180px; border:1px solid #ccc; border-radius:4px; background:#fff; touch-action:none;"></canvas>
+												<input type="hidden" id="signature-data" name="signature_data">
+												<p id="signature-error" class="help-block text-danger" role="alert" aria-live="polite" style="display:none;">Tanda tangan wajib diisi sebelum menyimpan.</p>
+												<button type="button" id="clear-signature" class="btn btn-default" style="margin-top:8px; min-height:44px;"><i class="fa fa-eraser"></i> Hapus tanda tangan</button>
+											</div>
+
 											<div class="form-group" style="padding:10px; margin-bottom:0px;">
 												<center><button type="submit" class="btn btn-block btn-primary"><i class="fa fa-floppy-o fa-fw"></i>&nbsp;Simpan</button></center>
 											</div>
@@ -99,14 +111,17 @@
 				
 				<div class="row">
 					<div class="col-md-12">
-						<div class="panel panel-primary">
+						<div class="panel panel-primary changelog-container">
 							<div class="panel-heading">
-								<h4 class="panel-title">
-									<i class="fa fa-history"></i> Update Log / Changelog
-								</h4>
+								<div class="changelog-heading-copy">
+									<span class="changelog-eyebrow">Riwayat Pembaruan</span>
+									<h2 class="changelog-heading">Update Log</h2>
+									<p class="changelog-subtitle">Catatan fitur baru, peningkatan, dan perbaikan sistem.</p>
+								</div>
+								<span class="changelog-heading-icon" aria-hidden="true"><i class="fa fa-history"></i></span>
 							</div>
 							<div class="panel-body">
-								<div class="panel-group" id="accordionChangelog">
+								<div class="panel-group changelog-list" id="accordionChangelog">
 
 								<?php
 								    $first = true;
@@ -120,21 +135,30 @@
 										$date = date("d F Y", strtotime($data['date']));
 										$panelClass = $semantic == 'major' ? 'panel-success' :
 														($semantic == 'minor' ? 'panel-info' : 'panel-default');
+										$semanticLabel = ucfirst($semantic);
 									?>
 
-								<div class="panel <?php echo $panelClass; ?>">
+								<div class="panel <?php echo $panelClass; ?> changelog-item">
 									<div class="panel-heading">
 										<h4 class="panel-title">
-											<a data-toggle="collapse" data-parent="#accordionChangelog" href="#ver<?= $update_id ?>">
-												<i class="fa fa-plus"></i> <?= "Version $version - $date" ?>
+											<a class="changelog-toggle" role="button" data-toggle="collapse" data-parent="#accordionChangelog" href="#ver<?= $update_id ?>" aria-controls="ver<?= $update_id ?>" aria-expanded="<?= $first ? 'true' : 'false' ?>">
+												<span class="changelog-version-icon" aria-hidden="true"><i class="fa fa-code-fork"></i></span>
+												<span class="changelog-version-copy">
+													<span class="changelog-version">Version <?= htmlspecialchars($version, ENT_QUOTES, 'UTF-8'); ?></span>
+													<span class="changelog-meta">
+														<span class="changelog-semantic"><?= htmlspecialchars($semanticLabel, ENT_QUOTES, 'UTF-8'); ?></span>
+														<span class="changelog-date"><i class="fa fa-calendar-o" aria-hidden="true"></i> <?= htmlspecialchars($date, ENT_QUOTES, 'UTF-8'); ?></span>
+													</span>
+												</span>
+												<i class="fa fa-chevron-down changelog-chevron" aria-hidden="true"></i>
 											</a>
 										</h4>
 									</div>
 
-									<div id="ver<?= $update_id ?>" class="panel-collapse collapse <?= $first ? 'in' : '' ?>"">
+									<div id="ver<?= $update_id ?>" class="panel-collapse collapse <?= $first ? 'in' : '' ?>">
 										<div class="panel-body">
-											<h5># <?= $title; ?></h5>
-											<ul>
+											<h5 class="changelog-entry-title"><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></h5>
+											<ul class="changelog-description">
 												<?php
 													$desc_query = mysql_query("SELECT * FROM update_desc_timbangan WHERE update_timbangan_id = '$update_id'");
 													$emoji = [
@@ -167,10 +191,86 @@
 														// ambil emoji acak
 														$random_emoji = $emoji[array_rand($emoji)];
 
-														echo "<li>$random_emoji $descriptions</li>";
+														echo "<li><i class=\"fa fa-check-circle changelog-description-icon\" aria-hidden=\"true\"></i><span>" . htmlspecialchars($descriptions, ENT_QUOTES, 'UTF-8') . "</span></li>";
 													}
 												?>
 											</ul>
+											<?php if (!empty($data['signature']) && preg_match('/\A[A-Za-z0-9+\/=]+\z/', $data['signature'])) { ?>
+												<figure class="changelog-signature">
+													<figcaption>Tanda tangan</figcaption>
+													<img src="data:image/png;base64,<?= htmlspecialchars($data['signature'], ENT_QUOTES, 'UTF-8'); ?>" alt="Tanda tangan pada update <?= htmlspecialchars($version, ENT_QUOTES, 'UTF-8'); ?>">
+												</figure>
+											<?php } ?>
+											<?php if ($canEditChangelog) { ?>
+												<div class="changelog-edit-toolbar">
+													<button type="button" class="btn btn-default btn-sm" data-toggle="collapse" data-target="#edit-changelog-<?= $update_id ?>" aria-expanded="false" aria-controls="edit-changelog-<?= $update_id ?>">
+														<i class="fa fa-pencil" aria-hidden="true"></i> Edit changelog
+													</button>
+												</div>
+												<div class="collapse changelog-edit-collapse" id="edit-changelog-<?= $update_id ?>">
+													<form class="changelog-edit-form" method="POST" action="changelog_update_action.php">
+														<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($changelogEditToken, ENT_QUOTES, 'UTF-8'); ?>">
+														<input type="hidden" name="update_id" value="<?= (int)$update_id; ?>">
+														<div class="row">
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="semantic-<?= (int)$update_id; ?>">Semantic versioning</label>
+																	<select class="form-control" id="semantic-<?= (int)$update_id; ?>" name="semantic" required>
+																		<option value="major" <?= $semantic == 'major' ? 'selected' : ''; ?>>Major</option>
+																		<option value="minor" <?= $semantic == 'minor' ? 'selected' : ''; ?>>Minor</option>
+																		<option value="patch" <?= $semantic == 'patch' ? 'selected' : ''; ?>>Patch</option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="version-<?= (int)$update_id; ?>">Version</label>
+																	<input class="form-control" type="text" id="version-<?= (int)$update_id; ?>" name="version" value="<?= htmlspecialchars($version, ENT_QUOTES, 'UTF-8'); ?>" required>
+																</div>
+															</div>
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="date-<?= (int)$update_id; ?>">Tanggal update</label>
+																	<input class="form-control" type="date" id="date-<?= (int)$update_id; ?>" name="date" value="<?= htmlspecialchars(date('Y-m-d', strtotime($data['date'])), ENT_QUOTES, 'UTF-8'); ?>" required>
+																</div>
+															</div>
+														</div>
+														<div class="form-group">
+															<label for="title-<?= (int)$update_id; ?>">Judul update</label>
+															<input class="form-control" type="text" id="title-<?= (int)$update_id; ?>" name="title" value="<?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?>" required>
+														</div>
+														<div class="form-group">
+															<label>Deskripsi update</label>
+															<div class="changelog-edit-descriptions">
+																<?php
+																	$edit_desc_query = mysql_query("SELECT description FROM update_desc_timbangan WHERE update_timbangan_id = '$update_id'");
+																	$descriptionIndex = 0;
+																	while ($edit_desc = mysql_fetch_array($edit_desc_query)) {
+																		$descriptionIndex++;
+																?>
+																	<div class="changelog-edit-description-row">
+																		<input class="form-control" type="text" name="descriptions[]" value="<?= htmlspecialchars($edit_desc['description'], ENT_QUOTES, 'UTF-8'); ?>" aria-label="Deskripsi update <?= $descriptionIndex; ?>">
+																		<button type="button" class="btn btn-default remove-changelog-description" aria-label="Hapus deskripsi"><i class="fa fa-minus" aria-hidden="true"></i></button>
+																	</div>
+																<?php } ?>
+															</div>
+															<button type="button" class="btn btn-default btn-sm add-changelog-description"><i class="fa fa-plus" aria-hidden="true"></i> Tambah deskripsi</button>
+														</div>
+														<div class="form-group">
+															<label for="edit-signature-<?= (int)$update_id; ?>">Tanda tangan</label>
+															<canvas class="changelog-edit-signature-pad" id="edit-signature-<?= (int)$update_id; ?>" width="900" height="160" role="img" aria-label="Area untuk mengganti tanda tangan" tabindex="0"></canvas>
+															<input type="hidden" name="signature_data" value="">
+															<input type="hidden" name="signature_action" value="keep">
+															<button type="button" class="btn btn-default clear-changelog-signature"><i class="fa fa-eraser" aria-hidden="true"></i> Hapus tanda tangan</button>
+															<p class="help-block">Biarkan tanda tangan tetap, gambar tanda tangan baru untuk menggantinya, atau pilih Hapus untuk mengosongkannya.</p>
+														</div>
+														<div class="changelog-edit-actions">
+															<button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i> Simpan perubahan</button>
+															<button type="button" class="btn btn-default" data-toggle="collapse" data-target="#edit-changelog-<?= $update_id ?>">Batal</button>
+														</div>
+													</form>
+												</div>
+											<?php } ?>
 										</div>
 									</div>
 								</div>
@@ -191,6 +291,72 @@
 		<!-- Input Show By Input Lots Of Description -->
 		<script>
 			$(document).ready(function(){
+				var canvas = document.getElementById("signature-pad");
+				if (canvas) {
+					var context = canvas.getContext("2d");
+					var isDrawing = false;
+					var hasSignature = false;
+
+					context.strokeStyle = "#111";
+					context.lineWidth = 3;
+					context.lineCap = "round";
+					context.lineJoin = "round";
+
+					function getPosition(event) {
+						var bounds = canvas.getBoundingClientRect();
+						return {
+							x: (event.clientX - bounds.left) * canvas.width / bounds.width,
+							y: (event.clientY - bounds.top) * canvas.height / bounds.height
+						};
+					}
+
+					canvas.addEventListener("pointerdown", function(event) {
+						event.preventDefault();
+						isDrawing = true;
+						canvas.setPointerCapture(event.pointerId);
+						var position = getPosition(event);
+						context.beginPath();
+						context.moveTo(position.x, position.y);
+					});
+
+					canvas.addEventListener("pointermove", function(event) {
+						if (!isDrawing) return;
+						event.preventDefault();
+						var position = getPosition(event);
+						context.lineTo(position.x, position.y);
+						context.stroke();
+						hasSignature = true;
+					});
+
+					function stopDrawing() {
+						isDrawing = false;
+						$("#signature-error").hide();
+						if (hasSignature) {
+							$("#signature-data").val(canvas.toDataURL("image/png"));
+						}
+					}
+
+					canvas.addEventListener("pointerup", stopDrawing);
+					canvas.addEventListener("pointercancel", stopDrawing);
+
+					$("#clear-signature").on("click", function() {
+						context.clearRect(0, 0, canvas.width, canvas.height);
+						hasSignature = false;
+						$("#signature-data").val("");
+						$("#signature-error").hide();
+					});
+
+					$("#formUpdateLog").on("submit", function(event) {
+						if (!hasSignature) {
+							event.preventDefault();
+							$("#signature-error").show();
+							canvas.focus();
+						} else {
+							$("#signature-data").val(canvas.toDataURL("image/png"));
+						}
+					});
+				}
+
 				$("#lots").on("input", function(){
 					var lots = $(this).val();
 					var descWrapper = $("#desc-wrapper");
@@ -205,6 +371,72 @@
 						`;
 						descWrapper.append(descInput);
 					}
+				});
+
+				$(document).on("click", ".add-changelog-description", function() {
+					var row = $("<div class='changelog-edit-description-row'></div>");
+					$("<input class='form-control' type='text' name='descriptions[]' aria-label='Deskripsi update'>").appendTo(row);
+					$("<button type='button' class='btn btn-default remove-changelog-description' aria-label='Hapus deskripsi'><i class='fa fa-minus' aria-hidden='true'></i></button>").appendTo(row);
+					$(this).siblings(".changelog-edit-descriptions").append(row);
+					row.find("input").focus();
+				});
+
+				$(document).on("click", ".remove-changelog-description", function() {
+					$(this).closest(".changelog-edit-description-row").remove();
+				});
+
+				$(".changelog-edit-signature-pad").each(function() {
+					var canvas = this;
+					var context = canvas.getContext("2d");
+					var form = $(canvas).closest("form");
+					var isDrawing = false;
+
+					context.strokeStyle = "#111";
+					context.lineWidth = 3;
+					context.lineCap = "round";
+					context.lineJoin = "round";
+
+					function getEditSignaturePosition(event) {
+						var bounds = canvas.getBoundingClientRect();
+						return {
+							x: (event.clientX - bounds.left) * canvas.width / bounds.width,
+							y: (event.clientY - bounds.top) * canvas.height / bounds.height
+						};
+					}
+
+					canvas.addEventListener("pointerdown", function(event) {
+						event.preventDefault();
+						isDrawing = true;
+						canvas.setPointerCapture(event.pointerId);
+						var position = getEditSignaturePosition(event);
+						context.beginPath();
+						context.moveTo(position.x, position.y);
+					});
+
+					canvas.addEventListener("pointermove", function(event) {
+						if (!isDrawing) return;
+						event.preventDefault();
+						var position = getEditSignaturePosition(event);
+						context.lineTo(position.x, position.y);
+						context.stroke();
+						form.find("[name='signature_action']").val("replace");
+					});
+
+					function stopEditSignatureDrawing() {
+						isDrawing = false;
+						if (form.find("[name='signature_action']").val() == "replace") {
+							form.find("[name='signature_data']").val(canvas.toDataURL("image/png"));
+						}
+					}
+
+					canvas.addEventListener("pointerup", stopEditSignatureDrawing);
+					canvas.addEventListener("pointercancel", stopEditSignatureDrawing);
+
+					form.find(".clear-changelog-signature").on("click", function() {
+						context.clearRect(0, 0, canvas.width, canvas.height);
+						form.find("[name='signature_data']").val("");
+						form.find("[name='signature_action']").val("remove");
+					});
 				});
 			});
 		</script>

@@ -25,6 +25,7 @@
 		<title>Update Log | PISS</title>
 
 		<?php echo headScript(); ?>
+		<link href="../css/changelog-premium.css" rel="stylesheet">
 
 	</head>
 	<body>
@@ -35,14 +36,17 @@
 				<br><br><br><br>
 				<div class="row">
 					<div class="col-md-12">
-						<div class="panel panel-primary">
+						<div class="panel panel-primary changelog-container">
 							<div class="panel-heading">
-								<h4 class="panel-title">
-									<i class="fa fa-history"></i> Update Log / Changelog
-								</h4>
+								<div class="changelog-heading-copy">
+									<span class="changelog-eyebrow">Riwayat Pembaruan</span>
+									<h2 class="changelog-heading">Update Log</h2>
+									<p class="changelog-subtitle">Catatan fitur baru, peningkatan, dan perbaikan sistem.</p>
+								</div>
+								<span class="changelog-heading-icon" aria-hidden="true"><i class="fa fa-history"></i></span>
 							</div>
 							<div class="panel-body">
-								<div class="panel-group" id="accordionChangelog">
+								<div class="panel-group changelog-list" id="accordionChangelog">
 
 								<?php
 								    $first = true;
@@ -56,21 +60,30 @@
 										$date = date("d F Y", strtotime($data['date']));
 										$panelClass = $semantic == 'major' ? 'panel-success' :
 														($semantic == 'minor' ? 'panel-info' : 'panel-default');
+										$semanticLabel = ucfirst($semantic);
 									?>
 
-								<div class="panel <?php echo $panelClass; ?>">
+								<div class="panel <?php echo $panelClass; ?> changelog-item">
 									<div class="panel-heading">
 										<h4 class="panel-title">
-											<a data-toggle="collapse" data-parent="#accordionChangelog" href="#ver<?= $update_id ?>">
-												<i class="fa fa-plus"></i> <?= "Version $version - $date" ?>
+											<a class="changelog-toggle" role="button" data-toggle="collapse" data-parent="#accordionChangelog" href="#ver<?= $update_id ?>" aria-controls="ver<?= $update_id ?>" aria-expanded="<?= $first ? 'true' : 'false' ?>">
+												<span class="changelog-version-icon" aria-hidden="true"><i class="fa fa-code-fork"></i></span>
+												<span class="changelog-version-copy">
+													<span class="changelog-version">Version <?= htmlspecialchars($version, ENT_QUOTES, 'UTF-8'); ?></span>
+													<span class="changelog-meta">
+														<span class="changelog-semantic"><?= htmlspecialchars($semanticLabel, ENT_QUOTES, 'UTF-8'); ?></span>
+														<span class="changelog-date"><i class="fa fa-calendar-o" aria-hidden="true"></i> <?= htmlspecialchars($date, ENT_QUOTES, 'UTF-8'); ?></span>
+													</span>
+												</span>
+												<i class="fa fa-chevron-down changelog-chevron" aria-hidden="true"></i>
 											</a>
 										</h4>
 									</div>
 
-									<div id="ver<?= $update_id ?>" class="panel-collapse collapse <?= $first ? 'in' : '' ?>"">
+									<div id="ver<?= $update_id ?>" class="panel-collapse collapse <?= $first ? 'in' : '' ?>">
 										<div class="panel-body">
-											<h5># <?= $title; ?></h5>
-											<ul>
+											<h5 class="changelog-entry-title"><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></h5>
+											<ul class="changelog-description">
 												<?php
 													$desc_query = mysql_query("SELECT * FROM update_desc_timbangan WHERE update_timbangan_id = '$update_id'");
 													$emoji = [
@@ -103,10 +116,16 @@
 														// ambil emoji acak
 														$random_emoji = $emoji[array_rand($emoji)];
 
-														echo "<li>$random_emoji $descriptions</li>";
+														echo "<li><i class=\"fa fa-check-circle changelog-description-icon\" aria-hidden=\"true\"></i><span>" . htmlspecialchars($descriptions, ENT_QUOTES, 'UTF-8') . "</span></li>";
 													}
 												?>
 											</ul>
+											<?php if (!empty($data['signature']) && preg_match('/\A[A-Za-z0-9+\/=]+\z/', $data['signature'])) { ?>
+												<figure class="changelog-signature">
+													<figcaption>Tanda tangan</figcaption>
+													<img src="data:image/png;base64,<?= htmlspecialchars($data['signature'], ENT_QUOTES, 'UTF-8'); ?>" alt="Tanda tangan pada update <?= htmlspecialchars($version, ENT_QUOTES, 'UTF-8'); ?>">
+												</figure>
+											<?php } ?>
 										</div>
 									</div>
 								</div>
