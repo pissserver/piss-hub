@@ -51,7 +51,7 @@
 		</tr>
 	</table>
 	<br />
-	<table style="border: solid 1px black; border-collapse: collapse; table-layout: fixed; margin-bottom: 5px;font-size:8pt; width:100%; margin-right:0px;" id="tableNonkomoditi">
+	<table style="border: solid 1px black; border-collapse: collapse; table-layout: fixed; margin-bottom: 5px;font-size:8pt; width:95%; margin-right:0px;" id="tableNonkomoditi">
 		<tr>
 			<th style="text-align: center;width: 3%; border: solid 1px black;">NO</th>
 			<th style="text-align: center;width: 6%; border: solid 1px black;">TGL MASUK</th>
