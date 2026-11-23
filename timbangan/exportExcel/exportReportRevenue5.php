@@ -3,20 +3,27 @@
     require_once '../libs/PHPExcel/Classes/PHPExcel.php'; 
     // Load library PHPExcel
 
-	$date		= '2016-10-01';
 	$date1		= $_POST['date1'];
 	$date2		= $_POST['date2'];
-	$date 		= date("d M Y");
 
     // Query untuk mengambil data
-    $sql = "select DATE(date_check) dateonly
-			from weighing w
-			where (w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
+    $sql = "select DATE(w.date_check) dateonly,
+			SUM(CASE WHEN m.merchant_type = 'Lainnya' THEN w.cost_tonase ELSE 0 END) as other,
+			SUM(CASE WHEN m.merchant_type = 'Sayur' THEN w.cost_tonase ELSE 0 END) as vegie,
+			SUM(CASE WHEN m.merchant_type = 'Buah' THEN w.cost_tonase ELSE 0 END) as fruit,
+			SUM(w.cost_tonase) as cost
+			from weighing w, merchant m
+			where w.merchant_id = m.merchant_id and
+			m.merchant_status = 'Aktif' and
+			(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
+			(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 			w.weighing_sts != 'Batal' and
-			(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')
-			group by dateonly";
+			(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+			w.weighing_sts6 IS NULL
+			group by DATE(w.date_check)
+			order by DATE(w.date_check)";
 
-    $query 	= mysql_query($sql);
+    $query 	= mysql_query($sql) or die(mysql_error());
 
     // Buat objek PHPExcel
     $excel = new PHPExcel();
@@ -65,34 +72,9 @@
 
     // Looping untuk mengambil dan menuliskan data
     while ($data = mysql_fetch_array($query)) {
-        $date3 		= date("Y-m-d", strtotime($data['dateonly']));
-        $other = executeScalar("select sum(w.cost_tonase) from weighing w, merchant m 
-				where w.merchant_id = m.merchant_id and 
-				m.merchant_status = 'Aktif' and
-				m.merchant_type = 'Lainnya' and 
-				(w.date_check between '".$date." 00:00:00' and '".$date3." 23:59:59') and
-				(w.date_pay > '".$date3."' || w.date_pay is NULL) and
-				w.weighing_sts != 'Batal' and
-				(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
-				
-				$vegie = executeScalar("select sum(w.cost_tonase) from weighing w, merchant m 
-				where w.merchant_id = m.merchant_id and 
-				m.merchant_status = 'Aktif' and
-				m.merchant_type = 'Sayur' and 
-				(w.date_check between '".$date." 00:00:00' and '".$date3." 23:59:59') and
-				(w.date_pay > '".$date3."' || w.date_pay is NULL) and
-				w.weighing_sts != 'Batal' and
-				(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
-				
-				$fruit = executeScalar("select sum(w.cost_tonase) from weighing w, merchant m 
-				where w.merchant_id = m.merchant_id and 
-				m.merchant_status = 'Aktif' and
-				m.merchant_type = 'Buah' and 
-				(w.date_check between '".$date." 00:00:00' and '".$date3." 23:59:59') and
-				(w.date_pay > '".$date3."' || w.date_pay is NULL) and
-				w.weighing_sts != 'Batal' and
-				(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
-				
+        $other = $data['other'];
+        $vegie = $data['vegie'];
+        $fruit = $data['fruit'];
 
 
         // Meratakan semua teks ke tengah, kecuali kolom E (Pedagang)
@@ -106,7 +88,7 @@
               ->setCellValue("C" . $row, $other != null ? $other : '0')
               ->setCellValue("D" . $row, $vegie != null ? $vegie : '0')
               ->setCellValue("E" . $row, $fruit != null ? $fruit : '0')
-              ->setCellValue("F" . $row, "=SUM(C" . $row . ":E" . $row . ")");
+              ->setCellValue("F" . $row, $data['cost'] != null ? $data['cost'] : '0');
 
         // Membuat format menjadi number
         $sheet->getStyle("C" . $row . ":F" . $row)->getNumberFormat()->setFormatCode('#,##0');
