@@ -25,10 +25,6 @@
 			<td style="width: 40%;">Tanggal Omzet</td>
 			<td style="width: 60%;">: <?php echo date("d M Y", strtotime($date1)); ?></td>
 		</tr>
-		<tr>
-			<td style="width: 25%;">Keterangan</td>
-			<td>: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan</td>
-		</tr>
 	</table>
 	<br />
 	

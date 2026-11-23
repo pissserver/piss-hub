@@ -22,10 +22,6 @@
 			<td style="width: 30%;">Tanggal Kerja Mitra</td>
 			<td style="width: 70%;">: <?php echo date("d M Y", strtotime($date)); ?></td>
 		</tr>
-		<tr>
-			<td style="width: 25%;">Keterangan</td>
-			<td>: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan</td>
-		</tr>
 	</table>
 	<br />
 	<div style="font-size: 12px; font-weight: bold; text-align: left; margin-bottom:10px;">

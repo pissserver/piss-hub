@@ -46,10 +46,6 @@
 			<td style="width: 25%;">Tanggal</td>
 			<td style="width: 75%;">: <?php echo date("d M Y", strtotime($date2)); ?></td>
 		</tr>
-		<tr>
-			<td style="width: 25%;">Keterangan</td>
-			<td>: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan</td>
-		</tr>
 	</table>
 	<br />
 	<table style="border: solid 1px black; border-collapse: collapse; margin-bottom: 5px;font-size:8pt; width:800px; margin-right:0px;" id="tableNonkomoditi">

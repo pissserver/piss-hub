@@ -165,5 +165,4 @@
 			<td style="text-align: right;border: solid 1px black;font-weight:bold;"> <?php echo format_no($cost); ?></td>
 		</tr>
 	</table>
-	<br />Keterangan: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan
 </page>

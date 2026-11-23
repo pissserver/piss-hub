@@ -76,7 +76,8 @@
 								and (w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 								(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 								w.weighing_sts != 'Batal' and
-								(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')";
+								(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+								w.weighing_sts6 IS NULL";
 			}
 			else{
 				$sql = "select 	w.weighing_id, 
@@ -101,7 +102,8 @@
 								(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 								(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 								w.weighing_sts != 'Batal' and
-								(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')";
+								(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+								w.weighing_sts6 IS NULL";
 			}
 			// debug_query($sql);
 			$query 	= mysql_query($sql);
@@ -147,7 +149,8 @@
 												m.merchant_status = 'Aktif' and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
+												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												w.weighing_sts6 IS NULL");
 				$netto = executeScalar("	select 	sum(w.netto) 
 										from 	weighing w, 
 												merchant m 
@@ -156,7 +159,8 @@
 												m.merchant_status = 'Aktif' and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
+												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												w.weighing_sts6 IS NULL");
 			}
 			else{
 				$cost = executeScalar("	select 	sum(w.cost_tonase)
@@ -168,7 +172,8 @@
 												(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
+												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												w.weighing_sts6 IS NULL");
 				$netto = executeScalar("	select 	sum(w.netto)
 										from 	weighing w, 
 												merchant m 
@@ -178,7 +183,8 @@
 												(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
+												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												w.weighing_sts6 IS NULL");
 			}
 		?>
 		<tr>
@@ -187,7 +193,4 @@
 			<td style="text-align: right;border: solid 1px black;font-weight:bold;"> <?php echo format_no($cost); ?></td>
 		</tr>
 	</table>
-	<br />
-	Keterangan: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan
-
 </page>

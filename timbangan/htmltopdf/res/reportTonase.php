@@ -45,10 +45,6 @@
 			<td style="width: 35%;">Komoditi</td>
 			<td style="width: 65%;">: <?php echo $commodity; ?></td>
 		</tr>
-		<tr>
-			<td style="width: 25%;">Keterangan</td>
-			<td>: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan</td>
-		</tr>
 	</table>
 	<br />
 	<table style="border: solid 1px black; border-collapse: collapse; table-layout: fixed; margin-bottom: 5px;font-size:8pt; width:90%; margin-right:0px;" id="tableNonkomoditi">

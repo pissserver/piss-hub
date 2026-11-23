@@ -31,7 +31,8 @@
                         and (w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
                         (w.date_pay > '".$date2."' || w.date_pay is NULL) and
                         w.weighing_sts != 'Batal' and
-                        (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')";
+                        (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+                        w.weighing_sts6 IS NULL";
     }
     else{
         $sql = "select 	w.weighing_id, 
@@ -56,7 +57,8 @@
                         (w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
                         (w.date_pay > '".$date2."' || w.date_pay is NULL) and
                         w.weighing_sts != 'Batal' and
-                        (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')";
+                        (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+                        w.weighing_sts6 IS NULL";
     }
 
     $query 	= mysql_query($sql);
@@ -180,12 +182,6 @@
 
     // Menambahkan border pada seluruh tabel
     $sheet->getStyle("A6:I" . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-
-    // Keterangan
-    $ketRow = $row + 2;
-    $sheet->mergeCells("A" . $ketRow . ":I" . $ketRow);
-    $sheet->setCellValue("A" . $ketRow, "Keterangan: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan");
-    $sheet->getStyle("A" . $ketRow)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
     // Set header untuk download file Excel
     header('Content-Type: application/vnd.ms-excel');

@@ -170,12 +170,6 @@
     // Menambahkan border pada seluruh tabel
     $sheet->getStyle("A6:J" . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 
-    // Keterangan
-    $ketRow = $row + 2;
-    $sheet->mergeCells("A" . $ketRow . ":J" . $ketRow);
-    $sheet->setCellValue("A" . $ketRow, "Keterangan: Data berwarna merah menandakan tagihan telah ditangguhkan, cek pada laporan penangguhan tagihan");
-    $sheet->getStyle("A" . $ketRow)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-
     // Set header untuk download file Excel
     header('Content-Type: application/vnd.ms-excel');
     header('Content-Disposition: attachment;filename="Rincian Omzet Tonase Harian' . ' (' .$commodity. ')_' . date('d M Y') . '.xls"');
