@@ -51,7 +51,7 @@
 		</tr>
 	</table>
 	<br />
-	<table style="border: solid 1px black; border-collapse: collapse; margin-bottom: 5px;font-size:8pt; width:1050px; margin-right:0px;" id="tableNonkomoditi">
+	<table style="border: solid 1px black; border-collapse: collapse; table-layout: fixed; margin-bottom: 5px;font-size:8pt; width:100%; margin-right:0px;" id="tableNonkomoditi">
 		<tr>
 			<th style="text-align: center;width: 3%; border: solid 1px black;">NO</th>
 			<th style="text-align: center;width: 6%; border: solid 1px black;">TGL MASUK</th>
@@ -61,32 +61,32 @@
 			<th style="text-align: center;width: 12%;border: solid 1px black;">PEDAGANG</th>
 			<th style="text-align: center;width: 4%;border: solid 1px black;">JENIS</th>
 			<th style="text-align: center;width: 7%;border: solid 1px black;">KOMODITI</th>
-			<th style="text-align: center;width: 5%;border: solid 1px black;">LAPAK</th>
-			<th style="text-align: center;width: 5%;border: solid 1px black;">STATUS MITRA</th>
-			<th style="text-align: center;width: 1%;border: solid 1px black;">STATUS NOTA</th>
-			<th style="text-align: center;width: 5%;border: solid 1px black;">BERAT MASUK (KG)</th>
-			<th style="text-align: center;width: 5%;border: solid 1px black;">BERAT KELUAR (KG)</th>
-			<th style="text-align: center;width: 6%;border: solid 1px black;">NON KOMODITI (KG)</th>
-			<th style="text-align: center;width: 5%;border: solid 1px black;">RAFAKSI (KG)</th>
+			<th style="text-align: center;width: 6%;border: solid 1px black;">LAPAK</th>
+			<th style="text-align: center;width: 6%;border: solid 1px black;">STS MITRA</th>
+			<th style="text-align: center;width: 6%;border: solid 1px black;">STS NOTA</th>
+			<th style="text-align: center;width: 6%;border: solid 1px black;">BERAT MASUK (KG)</th>
+			<th style="text-align: center;width: 6%;border: solid 1px black;">BERAT KELUAR (KG)</th>
+			<th style="text-align: center;width: 7%;border: solid 1px black;">NON KOMODITI (KG)</th>
+			<th style="text-align: center;width: 6%;border: solid 1px black;">RAFAKSI (KG)</th>
 			<th style="text-align: center;width: 6%;border: solid 1px black;">TONASE (KG)</th>
 		</tr>
 		<?php
 			//select tonase berdasarkan komoditi
 			if($commodity=='Semua'){
-				$sql = "select weighing_id, merchant_id, checker_id, goods_id, date_in, laborer_sts, weighing_sts, 
-				weighing_sts2, weight_in, weight_out, noncommodity, rafaksi, netto, reffer, nopol, date_check, weighing_sts6	
-				from weighing where weighing_sts != 'Batal' and 
-				(date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59')";
+				$sql = "select w.weighing_id, w.merchant_id, w.checker_id, w.goods_id, w.date_in, w.laborer_sts, w.weighing_sts,
+				w.weighing_sts2, w.weight_in, w.weight_out, w.noncommodity, w.rafaksi, w.netto, w.reffer, w.nopol, w.date_check, w.weighing_sts6
+				from weighing w where w.weighing_sts != 'Batal' and
+				(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59')";
 			}else{
 				$sql = "select w.weighing_id, w.merchant_id, w.checker_id, w.goods_id, w.date_in, w.laborer_sts, w.weighing_sts, 
-				w.weighing_sts2, w.weight_in, w.weight_out, w.noncommodity, w.rafaksi, w.netto, W.reffer, W.nopol, w.date_check, w.weighing_sts6
+				w.weighing_sts2, w.weight_in, w.weight_out, w.noncommodity, w.rafaksi, w.netto, w.reffer, w.nopol, w.date_check, w.weighing_sts6
 				from weighing w, merchant m 
 				where w.merchant_id = m.merchant_id and 
-				weighing_sts != 'Batal' and 
+				w.weighing_sts != 'Batal' and
 				m.merchant_type = '".$commodity."' and 
 				(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59')";
 			}
-			$query 		= mysql_query($sql);
+			$query 		= mysql_query($sql) or die(mysql_error());
 			$no 		= 1;
 			while($r= mysql_fetch_array($query)){
 				$name		= executeScalar("select merchant_name from merchant where merchant_id = '".$r['merchant_id']."'");

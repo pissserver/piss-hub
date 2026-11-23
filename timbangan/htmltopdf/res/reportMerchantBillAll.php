@@ -61,7 +61,8 @@
 				$sql = "	select 	m.merchant_id as id, 
 									m.merchant_name as name, 
 									m.merchant_type as type, 
-									SUM(cost) as total
+									SUM(cost) as total,
+									COUNT(DISTINCT w.weighing_id) as tot
 							from 	merchant m, weighing w, rent r, lapak l
 							where 	m.merchant_id = w.merchant_id 
 									and r.merchant_id = m.merchant_id 
@@ -76,7 +77,8 @@
 				$sql = "	select 	m.merchant_id as id, 
 									m.merchant_name as name, 
 									m.merchant_type as type, 
-									SUM(cost) as total
+									SUM(cost) as total,
+									COUNT(DISTINCT w.weighing_id) as tot
 							from 	merchant m, weighing w, rent r, lapak l
 							where 	m.merchant_id = w.merchant_id 
 									and m.merchant_id = r.merchant_id 
@@ -89,7 +91,7 @@
 									and (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')
 							group by id order by ".$sort."";
 			}
-			$query 	= mysql_query($sql);
+			$query 	= mysql_query($sql) or die(mysql_error());
 			$no 	= 1;
 			while($r= mysql_fetch_array($query)){
 				$sql2 	= mysql_query("	select 	l.lapak_name 
