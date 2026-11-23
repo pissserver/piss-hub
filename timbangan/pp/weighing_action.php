@@ -1919,7 +1919,7 @@
 				// Alert Information
 				$_SESSION['success'] = true;
 				$_SESSION['title'] = 'Berhasil';
-				$_SESSION['message'] = "Berhasil menangguhkan tagihan/nota";
+				$_SESSION['message'] = "Berhasil menjadikan tagihan/nota tidak terbayar";
 				echo "<script>window.location=('cancel4.php')</script>";
 				exit();
 			}else{

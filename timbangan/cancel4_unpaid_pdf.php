@@ -55,7 +55,7 @@ function unpaidPdfEscape($value) {
 $html = '
 <style>
 	body { font-family: helvetica; color: #233247; }
-	h1 { margin: 0 0 5px; color: #173b67; font-size: 18pt; text-align: center; text-transform: uppercase; }
+	h1 { margin:20px 0 5px; color: #173b67; font-size: 18pt; text-align: center; text-transform: uppercase; }
 	.report-meta { margin-bottom: 14px; color: #52657d; font-size: 9pt; text-align: center; }
 	table { width: 100%; border-collapse: collapse; font-size: 7pt; }
 	th { padding: 5px 2px; border: 1px solid #bdc9d6; background-color: #eaf0f6; color: #203650; font-weight: bold; text-align: center; }
@@ -65,7 +65,7 @@ $html = '
 </style>
 <h1>Form Tagihan Tidak Terbayar</h1>
 <div class="report-meta">Tanggal cetak: ' . date('d M Y', strtotime($dateNow)) . ' &nbsp;|&nbsp; Jumlah tagihan: ' . count($weighingIds) . '</div>
-<table width="100%" style="width: 100%; border-collapse: collapse; margin-right: 0px; font-size: 7pt; margin-top: 10px; page-break-inside: avoid;">
+<table width="100%" style="width: 100%; border-collapse: collapse; margin-right: 0px; font-size: 7pt; margin-top: 30px; page-break-inside: avoid;">
 	<thead>
 		<tr>
 			<th width="4%">No</th>
@@ -121,7 +121,7 @@ while ($data = mysql_fetch_array($query)) {
 $html .= '
 	</tbody>
 </table>
-<div style="position: relative; width: 100%; height: 18mm; margin-top: 24px; page-break-inside: avoid;">
+<div style="position: relative; width: 100%; height: 18mm; margin-top: 100px; page-break-inside: avoid;">
 	<div style="position: absolute; top: 0; left: 10%; width: 35%; text-align: center;">
 		Mengajukan,
 		<br><br><br>

@@ -1,15 +1,12 @@
 <?php
 	session_start();
 	include "../connection.php";
-	//Validasi role
-	if($_SESSION['role']='admin'||$_SESSION['role']='super_admin'){
-		if($_SESSION['username']!=''){
-			$admin = $_SESSION['username'];
-		}else{
-			header("Location:../login.html");
-		}
+	// Validasi role tanpa mengubah sesi pengguna.
+	if(isset($_SESSION['role']) && strtolower(trim($_SESSION['role'])) == 'pp' && isset($_SESSION['username']) && $_SESSION['username'] != ''){
+		$admin = $_SESSION['username'];
 	}else{
 		header("Location:../login.html");
+		exit();
 	}
 	$id = $_GET['id'];
 	$status = $_GET['status'];
