@@ -6,7 +6,7 @@
 	$sort		= $_POST['sortir'];
 	$date 		= date("d M Y");
 ?>
-<page backtop="8mm" backbottom="10mm" backleft="5mm" backright="5mm">
+<page backtop="8mm" backbottom="10mm" backleft="0mm" backright="0mm">
 	<page_header>
         <table style="width:95%; border:0px; margin-top:10px; margin-left:5px; margin-right:5px; font-size:8pt;">
             <tr>
@@ -72,6 +72,7 @@
 									and (w.date_pay > '".$date2."' || w.date_pay is NULL) 
 									and w.weighing_sts != 'Batal' 
 									and (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')
+									and weighing_sts6 IS NULL
 							group by id order by ".$sort."";
 			}else{
 				$sql = "	select 	m.merchant_id as id, 
@@ -89,6 +90,7 @@
 									and (w.date_pay > '".$date2."' || w.date_pay is NULL) 
 									and w.weighing_sts != 'Batal' 
 									and (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')
+									and weighing_sts6 IS NULL
 							group by id order by ".$sort."";
 			}
 			$query 	= mysql_query($sql) or die(mysql_error());
@@ -115,7 +117,8 @@
 											where 	merchant_id = '".$r['id']."' 
 													and (date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') 
 													and (date_pay > '".$date2."' || date_pay is NULL) 
-													and weighing_sts != 'Batal' and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')");
+													and weighing_sts != 'Batal' and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')
+													and weighing_sts6 IS NULL");
 				
 				//Hitung Jumlah Nota
 				$jml	= executeScalar("	select 	count(weighing_id) 
@@ -124,7 +127,8 @@
 													and (date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') 
 													and (date_pay > '".$date2."' || date_pay is NULL) 
 													and weighing_sts != 'Batal' 
-													and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')");
+													and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')
+													and weighing_sts6 IS NULL");
 				
 				//Hitung Umur Tagihan
 				$last_date	= executeScalar("	select 	date_check 
@@ -133,7 +137,9 @@
 														and (date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') 
 														and (date_pay > '".$date2."' || date_pay is NULL) 
 														and weighing_sts != 'Batal' 
-														and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung') order by weighing_id limit 1");
+														and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung') 
+														and weighing_sts6 IS NULL
+												order by weighing_id limit 1");
 				
 				$date3 	= new DateTime(date("Y-m-d", strtotime($last_date)));
 				$date4 	= new DateTime(date("Y-m-d", strtotime($date2)));

@@ -89,7 +89,8 @@
                                             and (date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') 
                                             and (date_pay > '".$date2."' || date_pay is NULL) 
                                             and weighing_sts != 'Batal' 
-                                            and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')");
+                                            and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')
+                                            and weighing_sts6 IS NULL");
 
         $total	= executeScalar("	select 	sum(cost) 
 									from 	weighing
@@ -97,7 +98,8 @@
 											and (date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') 
 											and (date_pay > '".$date2."' || date_pay is NULL) 
 											and weighing_sts != 'Batal' 
-											and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')");
+											and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')
+											and weighing_sts6 IS NULL");
         
         $diff = 0;
         if($jml>0){
@@ -107,7 +109,9 @@
 													and (date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') 
 													and (date_pay > '".$date2."' || date_pay is NULL) 
 													and weighing_sts != 'Batal' 
-													and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung') order by weighing_id limit 1");
+													and (weighing_sts2 != 'Dipecah' || weighing_sts2 != 'Digabung')
+													and weighing_sts6 IS NULL
+											order by weighing_id limit 1");
 			//Hitung Umur Tagihan
 			$date3 	= new DateTime(date("Y-m-d", strtotime($last_date)));
 			$date4 	= new DateTime(date("Y-m-d", strtotime($date2)));

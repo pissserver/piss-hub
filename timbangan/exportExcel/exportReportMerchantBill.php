@@ -17,7 +17,8 @@
 				(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 				(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 				w.weighing_sts != 'Batal' and
-				(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung')");
+				(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+				weighing_sts6 IS NULL");
                                         
     $name	= executeScalar("select merchant_name from merchant where merchant_id = '".$mid."'");
     $jenis	= executeScalar("select merchant_type from merchant where merchant_id = '".$mid."'");
