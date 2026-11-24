@@ -57,7 +57,7 @@
 					type: 'spline'
 				},
 				title: {
-					text: 'Tagihan Ditangguhkan',
+					text: 'Tagihan Tidak Terbayar',
 					x: -20 //center
 				},
 				xAxis: {

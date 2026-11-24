@@ -18,7 +18,7 @@
     <meta name="author" content="">
 	<link rel="icon" href="../img/icon.png">
     <link rel="shortcut icon" href="../img/icon.png" />
-    <title>Laporan Penangguhan Tagihan | PISS</title>
+    <title>Laporan Tagihan Tidak Terbayar | PISS</title>
 	<?php echo headScript(); ?>
 	<script src="../dataTables/dataTables.tableTools.css"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -41,7 +41,7 @@
 				<div class="col-lg-12">
 					<div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="	fa fa-file-text-o fa-fw"></i> Rincian Penangguhan Tagihan
+                            <i class="	fa fa-file-text-o fa-fw"></i> Rincian Tagihan Tidak Terbayar
                         </div>
                         <div class="panel-body">
 							<form class="form-horizontal" id="reportRevenue2" name="reportRevenue2" method="POST" target="_blank">

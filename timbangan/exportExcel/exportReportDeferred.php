@@ -30,7 +30,7 @@
                         and (w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
                         (w.date_pay > '".$date2."' || w.date_pay is NULL) and
                         w.weighing_sts != 'Batal' and
-                        (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+                        COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
                         w.weighing_sts6 = 'Ditangguhkan'";
     }
     else{
@@ -55,7 +55,7 @@
                         (w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
                         (w.date_pay > '".$date2."' || w.date_pay is NULL) and
                         w.weighing_sts != 'Batal' and
-                        (w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+                        COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
                         w.weighing_sts6 = 'Ditangguhkan'";
     }
 
@@ -85,29 +85,28 @@
     $sheet->getStyle("B3:B4")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
     // Merge cell
-    $sheet->mergeCells("A1:I1");
-    $sheet->mergeCells("A2:I2");
+    $sheet->mergeCells("A1:H1");
+    $sheet->mergeCells("A2:H2");
 
     // Menulis header
     $sheet->setCellValue("A6", "NO")
           ->setCellValue("B6", "TGL TAGIHAN")
-          ->setCellValue("C6", "NOPOL")
-          ->setCellValue("D6", "NOTA TAGIHAN")
-          ->setCellValue("E6", "PEDAGANG")
-          ->setCellValue("F6", "JENIS PDG")
-          ->setCellValue("G6", "UMUR TAGIHAN")
-          ->setCellValue("H6", "TONASE (KG)")
-          ->setCellValue("I6", "TOTAL (RP)");
+          ->setCellValue("C6", "NOTA TAGIHAN")
+          ->setCellValue("D6", "PEDAGANG")
+          ->setCellValue("E6", "UMUR TAGIHAN")
+          ->setCellValue("F6", "TONASE (KG)")
+          ->setCellValue("G6", "TOTAL (RP)")
+          ->setCellValue("H6", "KETERANGAN");
 
     // Mengatur warna latar belakang hijau untuk header
     // $sheet->getStyle('A6:I6')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
     // $sheet->getStyle('A6:I6')->getFill()->getStartColor()->setRGB('7FBF7F'); // Warna Hijau
 
     // Membuat Text Bold
-    $sheet->getStyle("A6:I6")->getFont()->setBold(true);
+    $sheet->getStyle("A6:H6")->getFont()->setBold(true);
 
     // Meratakan semua teks ke tengah, kecuali kolom E (Pedagang)
-    $sheet->getStyle('A6:I6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle('A6:H6')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
     $no			= 1;
     $row        = 7;
@@ -117,25 +116,23 @@
         $date3 		= new DateTime(date("Y-m-d", strtotime($data['date_check'])));
         $date4 		= new DateTime(date("Y-m-d", strtotime($date2)));
         $diff 		= $date4->diff($date3)->format("%a");
+        $reason = executeScalar("select pp_reason from pp_log where pp_target = '".$data['weighing_id']."'");
 
-        // Meratakan semua teks ke tengah, kecuali kolom E (Pedagang)
-        $sheet->getStyle('A:I')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-        // Set alignment khusus untuk kolom E (Pedagang) ke kiri
-        $sheet->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle('A:H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('D')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
         // Menulis data per baris
         $sheet->setCellValue("A" . $row, $no)
               ->setCellValue("B" . $row, date("d M Y", strtotime($data['date_check'])))
-              ->setCellValue("C" . $row, $data['nopol'])
-              ->setCellValue("D" . $row, 'TG'.$data['weighing_id'])
-              ->setCellValue("E" . $row, $data['name'])
-              ->setCellValue("F" . $row, $data['jenis'])
-              ->setCellValue("G" . $row, $diff. ' Hari')
-              ->setCellValue("H" . $row, $data['netto'])
-              ->setCellValue("I" . $row, $data['cost_tonase']);
+              ->setCellValue("C" . $row, 'TG'.$data['weighing_id'])
+              ->setCellValue("D" . $row, $data['name'] . ' (' . $data['jenis'] . ')')
+              ->setCellValue("E" . $row, $diff. ' Hari')
+              ->setCellValue("F" . $row, $data['netto'])
+              ->setCellValue("G" . $row, $data['cost_tonase'])
+              ->setCellValue("H" . $row, $reason != '' ? $reason : '-');
         
         // Membuat format menjadi number
-        $sheet->getStyle("H" . $row . ":I" . $row)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle("F" . $row . ":G" . $row)->getNumberFormat()->setFormatCode('#,##0');
             
         // Perhitungan total
         // if ($data['weighing_sts'] != 'Batal' && $data['weighing_sts'] != 'Dipecah' && $data['weighing_sts'] != 'Digabung') {
@@ -152,15 +149,15 @@
 
     // Menulis total pada baris terakhir
     if ($row > 7) {
-        $sheet->mergeCells("A" . $row . ":G" . $row); 
+        $sheet->mergeCells("A" . $row . ":E" . $row);
         $sheet->setCellValue("A" . $row, "TOTAL")
-              ->setCellValue("H" . $row, "=SUM(H7:H" . ($row - 1) . ")")
-              ->setCellValue("I" . $row, "=SUM(I7:I" . ($row - 1) . ")");
+              ->setCellValue("F" . $row, "=SUM(F7:F" . ($row - 1) . ")")
+              ->setCellValue("G" . $row, "=SUM(G7:G" . ($row - 1) . ")");
     } else {
-        $sheet->mergeCells("A" . $row . ":G" . $row); 
+        $sheet->mergeCells("A" . $row . ":E" . $row);
         $sheet->setCellValue("A" . $row, "TOTAL")
-              ->setCellValue("H" . $row,  0)
-              ->setCellValue("I" . $row,  0);
+              ->setCellValue("F" . $row,  0)
+              ->setCellValue("G" . $row,  0);
     }
 
     // Mengatur warna latar belakang kuning untuk baris total
@@ -168,16 +165,16 @@
     // $sheet->getStyle("A" . $row . ":I" . $row)->getFill()->getStartColor()->setRGB('FFFF00'); // Warna Kuning
 
     // Membuat Text Bold
-    $sheet->getStyle("A" . $row . ":I" . $row)->getFont()->setBold(true);
+    $sheet->getStyle("A" . $row . ":H" . $row)->getFont()->setBold(true);
 
     // Meratakan teks "TOTAL" ke tengah
-    $sheet->getStyle("A" . $row . ":I" . $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle("A" . $row . ":H" . $row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
     // Membuat format menjadi number
-    $sheet->getStyle("H" . $row . ":I" . $row)->getNumberFormat()->setFormatCode('#,##0');
+    $sheet->getStyle("F" . $row . ":G" . $row)->getNumberFormat()->setFormatCode('#,##0');
 
     // Menambahkan border pada seluruh tabel
-    $sheet->getStyle("A6:I" . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+    $sheet->getStyle("A6:H" . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 
     // Set header untuk download file Excel
     header('Content-Type: application/vnd.ms-excel');

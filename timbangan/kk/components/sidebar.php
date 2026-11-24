@@ -873,7 +873,7 @@
 								</li>
 
 								<li>
-									<a class="<?= isActive(['report_deferred.php']); ?>" href="report_deferred.php"><i class="fa fa-file-text fa-fw"></i> Penangguhan Tagihan</a>
+									<a class="<?= isActive(['report_deferred.php']); ?>" href="report_deferred.php"><i class="fa fa-file-text fa-fw"></i> Tagihan Tidak Terbayar</a>
 								</li>
 
 								<li class="<?= isParentActive(['report_revenue.php', 'report_revenue_merchant.php', 'report_revenue_unpaid.php', 'report_revenue_unpaid_merchant.php']); ?>"><a href="#"><i class="fa fa-money fa-fw"></i><span> Tagihan Tonase</span><span class="fa arrow"></span></a>

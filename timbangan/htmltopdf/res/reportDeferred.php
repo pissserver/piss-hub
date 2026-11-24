@@ -6,7 +6,7 @@
 	$commodity	= $_POST['commodity'];
 	$date 		= date("d M Y");
 ?>
-<page backtop="8mm" backbottom="10mm" backleft="4mm" backright="4mm">
+<page backtop="8mm" backbottom="10mm" backleft="0mm" backright="0mm">
 	<page_header>
         <table style="width:95%; border:0px; margin-top:10px; margin-left:5px; margin-right:5px; font-size:8pt;">
             <tr>
@@ -44,13 +44,12 @@
 		<tr>
 			<th style="text-align: center;width: 3%;height: 3%;border: solid 1px black;">NO</th>
 			<th style="text-align: center;width: 8%;border: solid 1px black;">TGL TAGIHAN</th>
-			<th style="text-align: center;width: 8%;border: solid 1px black;">NOPOL</th>
 			<th style="text-align: center;width: 9%;border: solid 1px black;">NOTA TAGIHAN</th>
-			<th style="text-align: center;width: 18%;border: solid 1px black;">PEDAGANG</th>
-			<th style="text-align: center;width: 6%;border: solid 1px black;">JENIS PDG</th>
+			<th style="text-align: center;width: 15%;border: solid 1px black;">PEDAGANG</th>
 			<th style="text-align: center;width: 6%;border: solid 1px black;">UMUR TAGIHAN</th>
 			<th style="text-align: center;width: 6%;border: solid 1px black;">TONASE<br>(KG)</th>
 			<th style="text-align: center;width: 8%;border: solid 1px black;">TOTAL<br>(RP)</th>
+			<th style="text-align: center;width: 11%;border: solid 1px black;">KETERANGAN</th>
 		</tr>
 		<?php
 			$sql = '';
@@ -75,7 +74,7 @@
 								and (w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 								(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 								w.weighing_sts != 'Batal' and
-								(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+								COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
 								w.weighing_sts6 = 'Ditangguhkan'";
 			}
 			else{
@@ -100,7 +99,7 @@
 								(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 								(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 								w.weighing_sts != 'Batal' and
-								(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+								COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
 								w.weighing_sts6 = 'Ditangguhkan'";
 			}
 			// debug_query($sql);
@@ -111,22 +110,24 @@
 				//$rid 		= sprintf("%07d", $r['reffer']);
 				//$year1 		= executeScalar("select date_format(date_out, '%y') from weighing where weighing_id = '".$r['weighing_id']."'");
 				//$year2 		= executeScalar("select date_format(date_out, '%y') from weighing where weighing_id = '".$r['weighing_id']."'");
-				
+
 				//Hitung Umur Tagihan
 				$date3 		= new DateTime(date("Y-m-d", strtotime($r['date_check'])));
 				$date4 		= new DateTime(date("Y-m-d", strtotime($date2)));
 				$diff 		= $date4->diff($date3)->format("%a");
+
+				$reason = executeScalar("select pp_reason from pp_log where pp_target = '".$r['weighing_id']."'");
+
 		?>
 		<tr>
 			<td style="text-align: center;border: solid 1px black;"><?php echo $no; ?></td>
 			<td style="text-align: center;border: solid 1px black;"><?php echo date("d M Y", strtotime($r['date_check'])); ?></td>
-			<td style="text-align: center;border: solid 1px black;"><?php echo $r['nopol'];?></td>
 			<td style="text-align: center;border: solid 1px black;"><?php echo 'TG'.$r['weighing_id']; ?></td>
-			<td style="text-align: left;border: solid 1px black;"><?php echo $r['name']; ?></td>
-			<td style="text-align: center;border: solid 1px black;"><?php echo $r['jenis']; ?></td>
+			<td style="text-align: left;border: solid 1px black;"><?php echo $r['name'] . ' (' . $r['jenis'] . ')'; ?></td>
 			<td style="text-align: center;border: solid 1px black;"><?php echo $diff; ?> Hari </td>
 			<td style="text-align: right;border: solid 1px black;"><?php echo format_no($r['netto']); ?></td>
 			<td style="text-align: right;border: solid 1px black;"><?php echo format_no($r['cost_tonase']); ?></td>
+			<td style="text-align: left;border: solid 1px black;"><?php echo $reason != '' ? $reason : '-'; ?></td>
 		</tr>
 		<?php 
 			$no++;
@@ -140,7 +141,7 @@
 												m.merchant_status = 'Aktif' and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
 												w.weighing_sts6 = 'Ditangguhkan'");
 				$netto = executeScalar("	select 	sum(w.netto) 
 										from 	weighing w, 
@@ -150,7 +151,7 @@
 												m.merchant_status = 'Aktif' and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
 												w.weighing_sts6 = 'Ditangguhkan'");
 			}
 			else{
@@ -163,7 +164,7 @@
 												(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
 												w.weighing_sts6 = 'Ditangguhkan'");
 				$netto = executeScalar("	select 	sum(w.netto)
 										from 	weighing w, 
@@ -174,14 +175,15 @@
 												(w.date_check between '".$date1." 00:00:00' and '".$date2." 23:59:59') and
 												(w.date_pay > '".$date2."' || w.date_pay is NULL) and
 												w.weighing_sts != 'Batal' and
-												(w.weighing_sts2 != 'Dipecah' || w.weighing_sts2 != 'Digabung') and
+												COALESCE(w.weighing_sts2, '') NOT IN ('Dipecah', 'Digabung') and
 												w.weighing_sts6 = 'Ditangguhkan'");
 			}
 		?>
 		<tr>
-			<td style="text-align: center;border: solid 1px black;" colspan="7"><b>TOTAL </b></td>
+			<td style="text-align: center;border: solid 1px black;" colspan="5"><b>TOTAL </b></td>
 			<td style="text-align: right;border: solid 1px black;font-weight:bold;"><?php echo format_no($netto); ?> </td>
 			<td style="text-align: right;border: solid 1px black;font-weight:bold;"> <?php echo format_no($cost); ?></td>
+			<td style="text-align: right;border: solid 1px black;font-weight:bold;"></td>
 		</tr>
 	</table>
 	<br />Keterangan:

@@ -1899,17 +1899,17 @@
 								where 	weighing_id 		= '".$id."'");
 		
 		if($tangguhkan && $mitraDitangguhkan){
-			$insert_spv = mysql_query("insert into spv_log (spv_log_id, 
-											spv_user, 
-											spv_action, 
-											spv_target, 
-											spv_nopol, 
-											spv_merchant_id, 
-											spv_reason, 
+			$insert_spv = mysql_query("insert into pp_log (pp_log_id, 
+											pp_user, 
+											pp_action, 
+											pp_target, 
+											pp_nopol, 
+											pp_merchant_id, 
+											pp_reason, 
 											action_time) 
 										values (	'', 
 											'".$name."', 
-											'Penangguhan tagihan/nota',
+											'Tagihan/nota tidak terbayar',
 											'".$id."', 
 											'".$nopol."', 
 											'".$merchant."', 
@@ -1923,12 +1923,12 @@
 				echo "<script>window.location=('cancel4.php')</script>";
 				exit();
 			}else{
-				echo "<script>window.alert('Data log spv gagal Masuk, Silahkan dicoba lagi')</script>;
+				echo "<script>window.alert('Data log pp gagal Masuk, Silahkan dicoba lagi')</script>;
 				<script>window.history.back()</script>";
 				exit();
 			}
 		}else{
-			echo "<script>window.alert('Proses Penangguhan gagal, Silahkan dicoba lagi')</script>;
+			echo "<script>window.alert('Proses tagihan tidak terbayar gagal, Silahkan dicoba lagi')</script>;
 			<script>window.history.back()</script>";
 			exit();
 		}
