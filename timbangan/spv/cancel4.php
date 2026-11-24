@@ -43,7 +43,7 @@
     <meta name="author" content="">
 	<link rel="icon" href="../img/icon.png">
     <link rel="shortcut icon" href="../img/icon.png" />
-    <title>Pembatalan Kendaraan Keluar | PISS</title>
+    <title>Tagihan Tidak Terbayar | PISS</title>
 	<?php echo headScript(); ?>
     <link href="../vendor/select2/select2.min.css" rel="stylesheet">
     <link href="../css/unpaid-invoice-form.css" rel="stylesheet">
