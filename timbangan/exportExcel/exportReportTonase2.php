@@ -10,7 +10,7 @@
 
     // Query untuk mengambil data
     $query 	= mysql_query("select distinct(w.weighing_id), w.weight_in, w.weight_out, w.noncommodity, w.rafaksi,
-                            w.netto, w.date_in, w.date_out, w.reffer, w.merchant_id, w.goods_id
+                            w.netto, w.date_in, w.date_out, w.reffer, w.merchant_id, w.goods_id, w.weighing_sts6
                             from weighing w
                             where w.weighing_sts != 'Batal' and
                             w.goods_id = '".$commodity."' and
@@ -111,6 +111,10 @@
 
         // Membuat format menjadi number
         $sheet->getStyle("G" . $row . ":K" . $row)->getNumberFormat()->setFormatCode('#,##0');
+
+        if ($data['weighing_sts6'] == 'Ditangguhkan') {
+            $sheet->getStyle("A" . $row . ":K" . $row)->getFont()->getColor()->setRGB('FF0000');
+        }
             
         // Perhitungan total
         // if ($data['weighing_sts'] != 'Batal' && $data['weighing_sts'] != 'Dipecah' && $data['weighing_sts'] != 'Digabung') {
@@ -159,6 +163,14 @@
 
     // Menambahkan border pada seluruh tabel
     $sheet->getStyle("A6:K" . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+
+    $row++;
+    $sheet->mergeCells("A" . $row . ":K" . $row);
+    $sheet->setCellValue("A" . $row, "Keterangan: Data berwarna merah yaitu data omzet yang tagihannya tidak tertagih/terbayar, lihat di laporan tagihan tidak terbayar untuk melihat detailnya.");
+    $sheet->getStyle("A" . $row)->getAlignment()
+          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+          ->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP)
+          ->setWrapText(true);
 
     // Set header untuk download file Excel
     header('Content-Type: application/vnd.ms-excel');

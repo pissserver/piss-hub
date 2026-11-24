@@ -183,6 +183,14 @@
     // Menambahkan border pada seluruh tabel
     $sheet->getStyle("A6:K" . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 
+    $row++;
+    $sheet->mergeCells("A" . $row . ":K" . $row);
+    $sheet->setCellValue("A" . $row, "Keterangan: Data berwarna merah yaitu data omzet yang tagihannya tidak tertagih/terbayar, lihat di laporan tagihan tidak terbayar untuk melihat detailnya.");
+    $sheet->getStyle("A" . $row)->getAlignment()
+          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+          ->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP)
+          ->setWrapText(true);
+
     // Set header untuk download file Excel
     header('Content-Type: application/vnd.ms-excel');
     header('Content-Disposition: attachment;filename="Rincian Omzet Mitra & Mandor Harian' . ' (' .$commodity. ')_' . date('d M Y') . '.xls"');

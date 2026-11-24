@@ -91,30 +91,31 @@
 			$netto 	= 0;
 			while($r= mysql_fetch_array($query)){
 				$goods	= executeScalar("select goods_name from goods where goods_id = '".$r['goods_id']."'");
+				$color = $r['weighing_sts6'] == 'Ditangguhkan' ? 'red' : 'black';
 				//$wid 	= sprintf("%07d", $r['weighing_id']);
 				//$rid 	= sprintf("%07d", $r['reffer']);
 				//$year1 	= executeScalar("select date_format(date_in, '%y') from weighing where weighing_id = '".$r['weighing_id']."'");
 				//$year2 	= executeScalar("select date_format(date_out, '%y') from weighing where weighing_id = '".$r['weighing_id']."'");
 		?>
 		<tr>
-			<td style="text-align: center;border: solid 1px black;"><?php echo $no; ?></td>
-			<td style="text-align: center;border: solid 1px black;"><?php echo date("d M Y", strtotime($r['date_out'])); ?></td>
-			<td style="text-align: center;border: solid 1px black;"><?php 
+			<td style="color: <?php echo $color; ?>; text-align: center;border: solid 1px black;"><?php echo $no; ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: center;border: solid 1px black;"><?php echo date("d M Y", strtotime($r['date_out'])); ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: center;border: solid 1px black;"><?php
 			if($r['reffer']=='null'||$r['reffer']==''){
 				echo 'TB'.$r['weighing_id'];
 			}else{
 				echo 'TB'.$r['reffer'];
 			} ?></td>
-			<td style="text-align: center;border: solid 1px black;"><?php echo 'TG'.$r['weighing_id']; ?></td>
-			<td style="text-align: center;border: solid 1px black;"><?php echo $r['nopol']; ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: center;border: solid 1px black;"><?php echo 'TG'.$r['weighing_id']; ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: center;border: solid 1px black;"><?php echo $r['nopol']; ?></td>
 			<!-- <td style="text-align: center;border: solid 1px black;"><?php echo $goods; ?></td> -->
-			<td style="text-align: center;border: solid 1px black;"><?php echo $r['laborer_sts']; ?></td>
-			<td style="text-align: center;border: solid 1px black;"><?php echo $r['weighing_sts2']; ?></td>
-			<td style="text-align: right;border: solid 1px black;"><?php echo format_no($r['weight_in']); ?></td>
-			<td style="text-align: right;border: solid 1px black;"><?php echo format_no($r['weight_out']); ?></td>
-			<td style="text-align: right;border: solid 1px black;"><?php echo format_no($r['noncommodity']); ?></td>
-			<td style="text-align: right;border: solid 1px black;"><?php echo format_no($r['rafaksi']); ?></td>
-			<td style="text-align: right;border: solid 1px black;"><?php echo format_no($r['netto']); ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: center;border: solid 1px black;"><?php echo $r['laborer_sts']; ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: center;border: solid 1px black;"><?php echo $r['weighing_sts2']; ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: right;border: solid 1px black;"><?php echo format_no($r['weight_in']); ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: right;border: solid 1px black;"><?php echo format_no($r['weight_out']); ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: right;border: solid 1px black;"><?php echo format_no($r['noncommodity']); ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: right;border: solid 1px black;"><?php echo format_no($r['rafaksi']); ?></td>
+			<td style="color: <?php echo $color; ?>; text-align: right;border: solid 1px black;"><?php echo format_no($r['netto']); ?></td>
 		</tr>
 		<?php 
 				$no++;
@@ -134,6 +135,9 @@
 			<td style="text-align: right;border: solid 1px black;font-weight:bold;"><?php echo format_no($netto); ?></td>
 		</tr>
 	</table>
+	<div style="font-size:8pt; margin-top:5px;">
+		Keterangan: Data berwarna merah yaitu data omzet yang tagihannya tidak tertagih/terbayar, lihat di laporan tagihan tidak terbayar untuk melihat detailnya.
+	</div>
     <page_footer>
         <table style="width: 95%; border: 0px black; margin-top:10px; margin-left:5px; margin-right:5px; font-size:8pt;">
             <tr>

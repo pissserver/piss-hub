@@ -150,6 +150,9 @@
 			<td style="text-align: right;border: solid 1px black;font-weight:bold;"><?php echo format_no($total); ?> </td>
 		</tr>
 	</table>
+	<div style="font-size:8pt; margin-top:5px;">
+		Keterangan: Data berwarna merah yaitu data omzet yang tagihannya tidak tertagih/terbayar, lihat di laporan tagihan tidak terbayar untuk melihat detailnya.
+	</div>
     <page_footer>
         <table style="width: 95%; border: 0px black; margin-top:10px; margin-left:5px; margin-right:5px; font-size:8pt;">
             <tr>

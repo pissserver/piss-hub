@@ -142,6 +142,10 @@
         // Membuat format menjadi number
         $sheet->getStyle("H" . $row . ":L" . $row)->getNumberFormat()->setFormatCode('#,##0');
 
+        if ($data['weighing_sts6'] == 'Ditangguhkan') {
+            $sheet->getStyle("A" . $row . ":L" . $row)->getFont()->getColor()->setRGB('FF0000');
+        }
+
         $no++;
         $row++;
     }
@@ -180,6 +184,14 @@
 
     // Menambahkan border pada seluruh tabel
     $sheet->getStyle("A8:L" . $row)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+
+    $row++;
+    $sheet->mergeCells("A" . $row . ":L" . $row);
+    $sheet->setCellValue("A" . $row, "Keterangan: Data berwarna merah yaitu data omzet yang tagihannya tidak tertagih/terbayar, lihat di laporan tagihan tidak terbayar untuk melihat detailnya.");
+    $sheet->getStyle("A" . $row)->getAlignment()
+          ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+          ->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP)
+          ->setWrapText(true);
 
     // Set header untuk download file Excel
     header('Content-Type: application/vnd.ms-excel');
