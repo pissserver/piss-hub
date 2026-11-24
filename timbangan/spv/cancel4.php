@@ -74,10 +74,10 @@
 					<div class="panel panel-primary unpaid-invoice-panel">
 						<div class="panel-heading unpaid-invoice-heading">
 							<span class="unpaid-invoice-heading-icon"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></span>
-							<div class="unpaid-invoice-heading-copy">
+							<!-- <div class="unpaid-invoice-heading-copy">
 								<h3>Buat Form Tagihan Tidak Terbayar</h3>
 								<p>Pilih tagihan dan siapkan alasan untuk dicantumkan pada PDF.</p>
-							</div>
+							</div> -->
 							<span class="unpaid-invoice-heading-badge">PDF</span>
 						</div>
 						<div class="panel-body">
