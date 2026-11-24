@@ -68,26 +68,37 @@
 	<?php include 'components/sidebar.php'; ?>
 
         <div id="page-wrapper">
+			<br><br><br><br>
             <div class="row">
-                <div class="col-lg-12">
-					<br /><br><br><br>
+                <div class="col-lg-12 unpaid-invoice-page-content">
 					<div class="panel panel-primary unpaid-invoice-panel">
-						<div class="panel-heading">
-							<i class="fa fa-file-pdf-o fa-fw"></i> Buat Form Tagihan Tidak Terbayar
+						<div class="panel-heading unpaid-invoice-heading">
+							<span class="unpaid-invoice-heading-icon"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></span>
+							<div class="unpaid-invoice-heading-copy">
+								<h3>Buat Form Tagihan Tidak Terbayar</h3>
+								<p>Pilih tagihan dan siapkan alasan untuk dicantumkan pada PDF.</p>
+							</div>
+							<span class="unpaid-invoice-heading-badge">PDF</span>
 						</div>
 						<div class="panel-body">
-							<p class="text-muted unpaid-invoice-intro">Pilih satu atau beberapa tagihan yang belum terbayar. Form akan dibuka sebagai PDF di tab baru.</p>
+							<p class="unpaid-invoice-intro"><i class="fa fa-info-circle" aria-hidden="true"></i> Alasan akan tampil pada PDF dan tidak disimpan ke database.</p>
 							<form id="unpaid-invoice-form" action="cancel4_unpaid_pdf.php" method="POST" target="_blank">
 								<div id="unpaid-invoice-rows" class="unpaid-invoice-rows">
 									<div class="unpaid-invoice-row">
-										<label for="unpaid-invoice-select-1">Tagihan 1</label>
-										<div class="unpaid-invoice-controls">
-											<select class="form-control unpaid-invoice-select" id="unpaid-invoice-select-1" name="weighing_ids[]" required <?= count($unpaidInvoices) == 0 ? 'disabled' : ''; ?>>
-												<option value="">Pilih tagihan belum terbayar</option>
-												<?php foreach ($unpaidInvoices as $invoice) { ?>
-													<option value="<?= (int)$invoice['id']; ?>"><?= htmlspecialchars($invoice['label'], ENT_QUOTES, 'UTF-8'); ?></option>
-												<?php } ?>
-											</select>
+										<div class="unpaid-invoice-fields">
+											<div class="unpaid-invoice-field">
+												<label class="unpaid-invoice-select-label" for="unpaid-invoice-select-1">Tagihan 1</label>
+												<select class="form-control unpaid-invoice-select" id="unpaid-invoice-select-1" name="weighing_ids[]" required <?= count($unpaidInvoices) == 0 ? 'disabled' : ''; ?>>
+													<option value="">Pilih tagihan belum terbayar</option>
+													<?php foreach ($unpaidInvoices as $invoice) { ?>
+														<option value="<?= (int)$invoice['id']; ?>"><?= htmlspecialchars($invoice['label'], ENT_QUOTES, 'UTF-8'); ?></option>
+													<?php } ?>
+												</select>
+											</div>
+											<div class="unpaid-invoice-field">
+												<label for="unpaid-invoice-reason-1">Alasan</label>
+												<textarea class="form-control unpaid-invoice-reason" id="unpaid-invoice-reason-1" name="reasons[]" rows="2" maxlength="500" required placeholder="Jelaskan alasan tagihan belum terbayar"></textarea>
+											</div>
 											<button type="button" class="btn btn-default remove-unpaid-invoice" aria-label="Hapus tagihan" disabled><i class="fa fa-trash" aria-hidden="true"></i></button>
 										</div>
 									</div>
@@ -212,7 +223,7 @@
 				$selects.each(function(index) {
 					var currentValue = this.value;
 					var $row = $(this).closest(".unpaid-invoice-row");
-					$row.find("label").text("Tagihan " + (index + 1)).attr("for", this.id);
+					$row.find(".unpaid-invoice-select-label").text("Tagihan " + (index + 1)).attr("for", this.id);
 					$row.find(".remove-unpaid-invoice").prop("disabled", $selects.length == 1);
 
 					$(this).find("option").each(function() {
@@ -229,17 +240,25 @@
 			$("#add-unpaid-invoice").on("click", function() {
 				nextInvoiceRowId++;
 				var selectId = "unpaid-invoice-select-" + nextInvoiceRowId;
+				var reasonId = "unpaid-invoice-reason-" + nextInvoiceRowId;
 				var $row = $("<div class='unpaid-invoice-row'></div>");
-				var $label = $("<label></label>").attr("for", selectId);
-				var $controls = $("<div class='unpaid-invoice-controls'></div>");
+				var $fields = $("<div class='unpaid-invoice-fields'></div>");
+				var $selectField = $("<div class='unpaid-invoice-field'></div>");
+				var $reasonField = $("<div class='unpaid-invoice-field'></div>");
+				var $label = $("<label class='unpaid-invoice-select-label'></label>").attr("for", selectId);
+				var $reasonLabel = $("<label>Alasan</label>").attr("for", reasonId);
 				var $select = $("<select class='form-control unpaid-invoice-select' required></select>")
 					.attr("id", selectId)
 					.attr("name", "weighing_ids[]")
 					.append(invoiceOptions.clone());
+				var $reason = $("<textarea class='form-control unpaid-invoice-reason' name='reasons[]' rows='2' maxlength='500' required placeholder='Jelaskan alasan tagihan belum terbayar'></textarea>")
+					.attr("id", reasonId);
 				var $removeButton = $("<button type='button' class='btn btn-default remove-unpaid-invoice' aria-label='Hapus tagihan'><i class='fa fa-trash' aria-hidden='true'></i></button>");
 
-				$controls.append($select).append($removeButton);
-				$row.append($label).append($controls);
+				$selectField.append($label).append($select);
+				$reasonField.append($reasonLabel).append($reason);
+				$fields.append($selectField).append($reasonField).append($removeButton);
+				$row.append($fields);
 				$("#unpaid-invoice-rows").append($row);
 				initializeInvoiceSelect($select);
 				refreshInvoiceRows();

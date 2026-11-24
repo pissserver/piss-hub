@@ -8,19 +8,44 @@ if (!in_array($userRole, array('spv', 'pp'), true)) {
     exit('Akses ditolak.');
 }
 
-if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST['weighing_ids']) || !is_array($_POST['weighing_ids'])) {
+if (
+    $_SERVER['REQUEST_METHOD'] != 'POST' ||
+    !isset($_POST['weighing_ids']) ||
+    !is_array($_POST['weighing_ids']) ||
+    !isset($_POST['reasons']) ||
+    !is_array($_POST['reasons']) ||
+    count($_POST['weighing_ids']) != count($_POST['reasons'])
+) {
     http_response_code(400);
-    exit('Pilih setidaknya satu tagihan.');
+    exit('Pilih tagihan dan isi alasan untuk setiap tagihan.');
 }
 
 $weighingIds = array();
-foreach ($_POST['weighing_ids'] as $weighingId) {
+ $invoiceReasons = array();
+foreach ($_POST['weighing_ids'] as $index => $weighingId) {
     if (!is_string($weighingId) || !ctype_digit($weighingId) || (int)$weighingId < 1) {
         http_response_code(400);
         exit('Pilihan tagihan tidak valid.');
     }
 
-    $weighingIds[(int)$weighingId] = (int)$weighingId;
+    if (!array_key_exists($index, $_POST['reasons']) || !is_string($_POST['reasons'][$index])) {
+        http_response_code(400);
+        exit('Alasan untuk setiap tagihan tidak valid.');
+    }
+
+    $invoiceId = (int)$weighingId;
+    $reason = trim($_POST['reasons'][$index]);
+    if ($reason === '' || strlen($reason) > 2000) {
+        http_response_code(400);
+        exit('Isi alasan untuk setiap tagihan (maksimal 500 karakter).');
+    }
+    if (isset($invoiceReasons[$invoiceId])) {
+        http_response_code(400);
+        exit('Tagihan yang sama tidak boleh dipilih lebih dari sekali.');
+    }
+
+    $weighingIds[$invoiceId] = $invoiceId;
+    $invoiceReasons[$invoiceId] = $reason;
 }
 
 if (count($weighingIds) == 0) {
@@ -32,10 +57,11 @@ $dateNow = $date_now;
 $oneYearAgo = date('Y-m-d', strtotime('-1 year', strtotime($dateNow)));
 $idList = implode(',', $weighingIds);
 $query = mysql_query("
-    SELECT w.*, m.merchant_name, g.goods_name
+    SELECT w.*, m.merchant_name, g.goods_name, wm.cost_bayar AS cost_mitra
     FROM weighing w
     LEFT JOIN merchant m ON m.merchant_id = w.merchant_id
     LEFT JOIN goods g ON g.goods_id = w.goods_id
+    LEFT JOIN weighing_mitra wm ON wm.weighing_id = w.weighing_id
     WHERE w.weighing_id IN ($idList)
         AND w.date_in BETWEEN '$oneYearAgo' AND '$dateNow'
         AND w.weighing_sts = 'Keluar'
@@ -62,6 +88,7 @@ $html = '
 	td { padding: 4px 2px; border: 1px solid #d5dde6; vertical-align: middle; }
 	.center { text-align: center; }
 	.weight { text-align: right; white-space: nowrap; }
+	.reason-row td { padding: 5px; background-color: #f5f8fb; }
 </style>
 <h1>Form Tagihan Tidak Terbayar</h1>
 <div class="report-meta">Tanggal cetak: ' . date('d M Y', strtotime($dateNow)) . ' &nbsp;|&nbsp; Jumlah tagihan: ' . count($weighingIds) . '</div>
@@ -72,13 +99,15 @@ $html = '
 			<th width="11%">No Nota</th>
 			<th width="9%">Nopol</th>
 			<th width="14%">Pedagang</th>
-			<th width="11%">Barang</th>
-			<th width="7%">Masuk</th>
-			<th width="7%">Keluar</th>
-			<th width="7%">Netto</th>
-			<th width="7%">Status</th>
-			<th width="15%">Tanggal Masuk / Keluar</th>
-			<th width="8%">Usia Tagihan</th>
+			<th width="10%">Barang</th>
+			<th width="6%">Masuk</th>
+			<th width="6%">Keluar</th>
+			<th width="6%">Netto</th>
+			<th width="6%">Status</th>
+			<th width="10%">Tanggal Masuk / Keluar</th>
+			<th width="5%">Usia Tagihan</th>
+			<th width="7%">Tagihan Tonase</th>
+			<th width="6%">Tagihan Mitra</th>
 		</tr>
 	</thead>
 	<tbody>';
@@ -100,6 +129,7 @@ while ($data = mysql_fetch_array($query)) {
     $weightIn = $data['weight_in'] != NULL ? $data['weight_in'] . ' Kg' : '0 Kg';
     $weightOut = $data['weight_out'] != NULL ? $data['weight_out'] . ' Kg' : '0 Kg';
     $netto = $data['netto'] != NULL ? $data['netto'] . ' Kg' : '0 Kg';
+    $reasonHtml = nl2br(unpaidPdfEscape($invoiceReasons[(int)$data['weighing_id']]));
 
     $html .= '
 		<tr>
@@ -114,6 +144,11 @@ while ($data = mysql_fetch_array($query)) {
 			<td class="center">' . unpaidPdfEscape($data['weighing_sts']) . '</td>
 			<td class="center">Masuk: ' . unpaidPdfEscape($dateIn) . '<br>Keluar: ' . unpaidPdfEscape($dateOut) . '</td>
 			<td class="center">' . unpaidPdfEscape($ageText) . '</td>
+			<td class="center">' . unpaidPdfEscape(format_rupiah($data['cost_tonase'])) . '</td>
+			<td class="center">' . unpaidPdfEscape($data['cost_mitra'] != NULL ? format_rupiah($data['cost_mitra']) : '-') . '</td>
+		</tr>
+		<tr class="reason-row">
+			<td colspan="13"><strong>Alasan:</strong> ' . $reasonHtml . '</td>
 		</tr>';
     $number++;
 }
