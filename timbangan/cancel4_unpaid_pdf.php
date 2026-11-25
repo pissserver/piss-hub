@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . "/connection.php";
 
 $userRole = isset($_SESSION['role']) ? strtolower(trim($_SESSION['role'])) : '';
-if (!in_array($userRole, array('spv', 'pp'), true)) {
+if (!in_array($userRole, array('spv', 'pp', 'keuangan'), true)) {
     http_response_code(403);
     exit('Akses ditolak.');
 }
@@ -26,6 +26,10 @@ $oneYearAgo = date('Y-m-d', strtotime('-1 year', strtotime($dateNow)));
 $invoiceId = 0;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!in_array($userRole, array('spv', 'pp'), true)) {
+        unpaidPdfError(403, 'Akses ditolak.', '');
+    }
+
     if (
         !isset($_SESSION['unpaid_invoice_csrf']) ||
         !isset($_POST['csrf_token']) ||
@@ -159,12 +163,16 @@ $detailsQuery = mysql_query("
     SELECT d.weighing_id, d.reason, w.nopol, w.merchant_id, w.goods_id,
         w.weight_in, w.weight_out, w.netto, w.date_in, w.date_out,
         w.weighing_sts, w.cost_tonase, m.merchant_name, g.goods_name,
-        wm.cost_bayar AS cost_mitra
+        wm.cost_mitra
     FROM unpaid_invoice_details d
     LEFT JOIN weighing w ON w.weighing_id = d.weighing_id
     LEFT JOIN merchant m ON m.merchant_id = w.merchant_id
     LEFT JOIN goods g ON g.goods_id = w.goods_id
-    LEFT JOIN weighing_mitra wm ON wm.weighing_id = w.weighing_id
+    LEFT JOIN (
+        SELECT weighing_id, SUM(cost_bayar) AS cost_mitra
+        FROM weighing_mitra
+        GROUP BY weighing_id
+    ) wm ON wm.weighing_id = w.weighing_id
     WHERE d.unpaid_invoice_id = $invoiceId
     ORDER BY d.id ASC
 ");
@@ -187,6 +195,9 @@ $html = '
     .center { text-align: center; }
     .weight { text-align: right; white-space: nowrap; }
     .reason-row td { padding: 5px; background-color: #f5f8fb; }
+    .summary-table { width: 42%; margin: 10px 0 0 auto; font-size: 8pt; }
+    .summary-table td { padding: 5px 8px; }
+    .summary-total td { background-color: #eaf0f6; color: #203650; font-weight: bold; }
 </style>
 <h1>Form Tagihan Tidak Terbayar</h1>
 <div class="form-code">' . unpaidPdfEscape($invoice['code']) . '</div>
@@ -195,23 +206,26 @@ $html = '
     <thead>
         <tr>
             <th width="4%">No</th>
-            <th width="11%">No Nota</th>
-            <th width="9%">Nopol</th>
+            <th width="9%">No Nota</th>
+            <th width="7%">Nopol</th>
             <th width="14%">Pedagang</th>
-            <th width="10%">Barang</th>
-            <th width="6%">Masuk</th>
-            <th width="6%">Keluar</th>
-            <th width="6%">Netto</th>
+            <th width="8%">Barang</th>
+            <th width="5%">Masuk</th>
+            <th width="5%">Keluar</th>
+            <th width="5%">Netto</th>
             <th width="6%">Status</th>
-            <th width="10%">Tanggal Masuk / Keluar</th>
+            <th width="11%">Tanggal Masuk / Keluar</th>
             <th width="5%">Usia Tagihan</th>
             <th width="7%">Tagihan Tonase</th>
-            <th width="6%">Tagihan Mitra</th>
+            <th width="7%">Tagihan Mitra</th>
+            <th width="7%">Total Tagihan<br>(Tonase + Mitra)</th>
         </tr>
     </thead>
     <tbody>';
 
 $number = 1;
+$totalTonase = 0;
+$totalMitra = 0;
 while ($data = mysql_fetch_array($detailsQuery)) {
     $invoiceNumber = 'TG' . sprintf('%07d', $data['weighing_id']);
     $dateInTimestamp = !empty($data['date_in']) ? strtotime($data['date_in']) : false;
@@ -229,6 +243,11 @@ while ($data = mysql_fetch_array($detailsQuery)) {
     $weightOut = $data['weight_out'] !== NULL ? $data['weight_out'] . ' Kg' : '0 Kg';
     $netto = $data['netto'] !== NULL ? $data['netto'] . ' Kg' : '0 Kg';
     $reasonHtml = nl2br(unpaidPdfEscape($data['reason']));
+    $costTonase = $data['cost_tonase'] !== NULL ? (float)$data['cost_tonase'] : 0;
+    $costMitra = $data['cost_mitra'] !== NULL ? (float)$data['cost_mitra'] : 0;
+    $totalTonase += $costTonase;
+    $totalMitra += $costMitra;
+    $totalCharge = $costTonase + $costMitra;
 
     $html .= '
         <tr>
@@ -245,14 +264,32 @@ while ($data = mysql_fetch_array($detailsQuery)) {
             <td class="center">' . unpaidPdfEscape($ageText) . '</td>
             <td class="center">' . unpaidPdfEscape(format_rupiah($data['cost_tonase'])) . '</td>
             <td class="center">' . unpaidPdfEscape($data['cost_mitra'] !== NULL ? format_rupiah($data['cost_mitra']) : '-') . '</td>
+            <td class="center">' . unpaidPdfEscape(format_rupiah($totalCharge)) . '</td>
         </tr>
         <tr class="reason-row">
-            <td colspan="13"><strong>Alasan:</strong> ' . $reasonHtml . '</td>
+            <td colspan="14"><strong>Alasan:</strong> ' . $reasonHtml . '</td>
         </tr>';
     $number++;
 }
 
+$totalOverall = $totalTonase + $totalMitra;
 $html .= '
+    </tbody>
+</table>
+<table class="summary-table">
+    <tbody>
+        <tr>
+            <td>Total Tagihan Tonase</td>
+            <td class="weight">' . unpaidPdfEscape(format_rupiah($totalTonase)) . '</td>
+        </tr>
+        <tr>
+            <td>Total Tagihan Mitra</td>
+            <td class="weight">' . unpaidPdfEscape(format_rupiah($totalMitra)) . '</td>
+        </tr>
+        <tr class="summary-total">
+            <td>Total Keseluruhan</td>
+            <td class="weight">' . unpaidPdfEscape(format_rupiah($totalOverall)) . '</td>
+        </tr>
     </tbody>
 </table>
 <div style="position: relative; width: 100%; height: 18mm; margin-top: 55px; page-break-inside: avoid;">

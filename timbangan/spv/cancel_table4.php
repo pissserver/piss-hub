@@ -24,6 +24,7 @@
 			<th style="text-align: center; vertical-align: middle; width:5%;">KELUAR</th>
 			<th style="text-align: center; vertical-align: middle; width:5%;">NETTO</th>
 			<th style="text-align: center; vertical-align: middle; width:5%;">STATUS</th>
+			<th style="vertical-align: middle; text-align: center; width:8%;">TOTAL TAGIHAN</th>
 			<th style="vertical-align: middle; text-align: center; width:8%;">JAM <br>MASUK & KELUAR</th>
 			<th style="vertical-align: middle; text-align: center; width:8%;">TANGGAL <br>MASUK & KELUAR</th>
 			<th style="text-align: center; vertical-align: middle; width:5%;">AKSI</th>
@@ -38,6 +39,7 @@
 			$merchant = executeScalar("select merchant_name from merchant where merchant_id = '".$data['merchant_id']."'");
 			$goods 	= executeScalar("select goods_name from goods where goods_id = '".$data['goods_id']."'");
 			$sama 	= executeScalar("select count(transportation_id) from transportation where transportation_nopol = '".$data['nopol']."'");
+			$costMitra = executeScalar("select sum(cost_bayar) from weighing_mitra where weighing_id = '".$data['weighing_id']."'");
 		?>
 		<tr>
 			<td style="vertical-align: middle; text-align:center;"><?php echo $no; ?></td>
@@ -68,6 +70,12 @@
 			<td style="vertical-align: middle; text-align:center;"><?php echo $data['weight_out'] != NULL ? $data['weight_out'].' Kg' : '0 Kg'; ?></td>
 			<td style="vertical-align: middle; text-align:center;"><?php echo $data['netto'] != NULL ? $data['netto'].' Kg' : '0 Kg'; ?></td>
 			<td style="vertical-align: middle; text-align:center;"><?php echo $data['weighing_sts']; ?></td>
+			<td style="vertical-align: middle; text-align:center;">
+				<?php
+					$totalTagihan = (float)$data['cost_tonase'] + (float)$costMitra;
+					echo 'Rp. ' . number_format($totalTagihan, 0, ',', '.');
+				?>
+			</td>
 			<td style="vertical-align: middle; text-align:center;">
 				<div style="background-color: #428bca; color: #fff; padding: 3px; border-radius: 5px; margin: 5px auto 0 auto; width: 100px;">		
 					<i class="fa fa-arrow-circle-down fa-fw"></i>&nbsp;<?php echo date("H:i", strtotime($data['time_in'])); ?>
