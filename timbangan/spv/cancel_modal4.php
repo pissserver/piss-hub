@@ -26,7 +26,7 @@
 		</div>
 		<div class="form-group" style="padding:10px; margin-left:10px; margin-right: 10px; margin-top: -15px;">
 			<label>Alasan Tidak Terbayar</label>
-			<input id="reason" name="reason" placeholder="Alasan Mengapa Tidak Terbayar" type="text" class="form-control" required>                  
+			<textarea id="reason" name="reason" placeholder="Alasan Mengapa Tidak Terbayar" rows="4" class="form-control" required></textarea>
 		</div>
 		<div class="form-group" style="padding:10px; margin-top:-10px; margin-left:10px; margin-right: 10px;">
 			<button type="submit" class="btn btn-outline btn-primary btn-block btn-sm" style="font-size: 14px;"><i class="fa fa-floppy-o fa-fw" style="font-size: 16px;"></i>&nbsp;Simpan</button>               
